@@ -1,12 +1,11 @@
-package app.Models.Entities;
+package concole.app.Models.Entities;
 
-import app.Models.enums.Role;
+import concole.app.Models.enums.Role;
 
 import java.time.LocalDateTime;
-import java.util.UUID;
 
 public class Person {
-    private UUID id; // auto-incrementing ID
+    private int id; // auto-incrementing ID
     private String firstName;
     private String lastName;
     private String email;
@@ -14,7 +13,7 @@ public class Person {
     private Role role;
     private LocalDateTime createdAt;
 
-    public Person(UUID id, String firstName, String lastName, String email, String phone, Role role, LocalDateTime createdAt) {
+    public Person(int id, String firstName, String lastName, String email, String phone, Role role, LocalDateTime createdAt) {
         this.id = id;
         this.firstName = firstName;
         this.lastName = lastName;
@@ -25,11 +24,11 @@ public class Person {
     }
 
     // Getters and setters for each field
-    public UUID getId() {
+    public int getId() {
         return id;
     }
 
-    public void setId(UUID id) {
+    public void setId(int id) {
         this.id = id;
     }
 

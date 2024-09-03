@@ -1,15 +1,14 @@
-package app.Models.Entities;
+package concole.app.Models.Entities;
 
-import app.Models.enums.Role;
+import concole.app.Models.enums.Role;
 
 import java.time.LocalDateTime;
 import java.util.List;
-import java.util.UUID;
 
 public class Admin extends Person {
     private List<Contract> contracts; // Association 1 to *
 
-    public Admin(UUID id, String firstName, String lastName, String email, String phone, Role role, LocalDateTime createdAt, List<Contract> contracts) {
+    public Admin(int id, String firstName, String lastName, String email, String phone, Role role, LocalDateTime createdAt, List<Contract> contracts) {
         super(id, firstName, lastName, email, phone, role, createdAt);
         this.contracts = contracts;
     }

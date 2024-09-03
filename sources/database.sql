@@ -183,3 +183,17 @@ public static String createTicket() {
             "promotionalOffer_id INTEGER REFERENCES promotionalOffer(id) ON UPDATE CASCADE ON DELETE CASCADE"; // Added foreign key
     return createTable("ticket", tableDefinition);
 }
+/**
+ * Generates a SQL query to create a 'ticket' table.
+ *
+ * @return A SQL query string to create the 'ticket' table.
+ */
+public static String createPartenaryContracts() {
+    String tableDefinition = "id SERIAL PRIMARY KEY," +
+            "partenar_id INT NOT NULL," +
+            "contract_id INT NOT NULL," +
+            "FOREIGN KEY (partner_id) REFERENCES partner(id) ON UPDATE CASCADE ON UPDATE DELETE," +
+            "FOREIGN KEY (contract_id) REFERENCES contract(id) ON UPDATE CASCADE ON UPDATE DELETE" +
+            "deleted_at TIMESTAMP DEFAULT NULL,";
+    return createTable("ticket", tableDefinition);
+}

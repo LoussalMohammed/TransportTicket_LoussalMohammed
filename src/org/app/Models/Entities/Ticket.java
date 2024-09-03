@@ -1,10 +1,10 @@
-package app.Models.Entities;
+package concole.app.Models.Entities;
 
 import java.math.BigDecimal;
 import java.util.UUID;
-import app.Models.enums.TransportType;
+import concole.app.Models.enums.TransportType;
 import java.util.Date;
-import app.Models.enums.TicketStatus;
+import concole.app.Models.enums.TicketStatus;
 
 public class Ticket {
     private UUID id;

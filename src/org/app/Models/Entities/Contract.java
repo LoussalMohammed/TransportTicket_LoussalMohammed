@@ -1,7 +1,6 @@
-package app.Models.Entities;
+package concole.app.Models.Entities;
 
-import app.Models.enums.CurrentStatus;
-import app.Models.enums.CurrentStatus.*;
+import concole.app.Models.enums.CurrentStatus;
 
 import java.math.BigDecimal;
 import java.util.Date;
@@ -15,11 +14,11 @@ public class Contract {
     private boolean renewed;
     private CurrentStatus currentStatus;
 
-    public Contract(UUID id, Date initDate, Date endDate, BigDecimal specialTarif, String accordConditions, boolean renewed, CurrentStatus currentStatus) {
+    public Contract(UUID id, Date initDate, Date endDate, BigDecimal specialTariff, String accordConditions, boolean renewed, CurrentStatus currentStatus) {
         this.id = id;
         this.initDate = initDate;
         this.endDate = endDate;
-        this.specialTarif = specialTarif;
+        this.specialTariff = specialTariff;
         this.accordConditions = accordConditions;
         this.renewed = renewed;
         this.currentStatus = currentStatus;
@@ -48,12 +47,12 @@ public class Contract {
         this.endDate = endDate;
     }
 
-    public BigDecimal getSpecialTarif() {
-        return specialTarif;
+    public BigDecimal getSpecialTariff() {
+        return specialTariff;
     }
 
-    public void setSpecialTarif(BigDecimal specialTarif) {
-        this.specialTarif = specialTarif;
+    public void setSpecialTariff(BigDecimal specialTarif) {
+        this.specialTariff = specialTarif;
     }
 
     public String getAccordConditions() {
