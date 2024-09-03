@@ -1,7 +1,9 @@
-package concole.app.Models.Entities;
+package org.app.Models.Entities;
 
-import concole.app.Models.enums.Role;
+import org.app.Models.Enums.Role;
+import org.app.Models.Helpers.PasswordUtil;
 
+import java.sql.Date;
 import java.time.LocalDateTime;
 
 public class Person {
@@ -11,15 +13,19 @@ public class Person {
     private String email;
     private String phone;
     private Role role;
-    private LocalDateTime createdAt;
 
-    public Person(int id, String firstName, String lastName, String email, String phone, Role role, LocalDateTime createdAt) {
+    private String hashedPassword;
+    private LocalDateTime createdAt;
+    private Date deleted_at;
+
+    public Person(int id, String firstName, String lastName, String email, String phone, Role role, String password, LocalDateTime createdAt) {
         this.id = id;
         this.firstName = firstName;
         this.lastName = lastName;
         this.email = email;
         this.phone = phone;
         this.role = role;
+        this.hashedPassword = PasswordUtil.hashPassword(password);
         this.createdAt = createdAt;
     }
 
@@ -72,6 +78,14 @@ public class Person {
         this.role = role;
     }
 
+    public void setHashedPassword(String hashedPassword) {
+        this.hashedPassword = hashedPassword;
+    }
+    public String getHashedPassword() {
+        return this.hashedPassword;
+    }
+
+
     public LocalDateTime getCreatedAt() {
         return createdAt;
     }
@@ -79,6 +93,15 @@ public class Person {
     public void setCreatedAt(LocalDateTime createdAt) {
         this.createdAt = createdAt;
     }
+
+    public Date getDeletedAt() {
+        return deleted_at;
+    }
+
+    public void setDeletedAt(Date deleted_at) {
+        this.deleted_at = deleted_at;
+    }
+
 
     @Override
     public String toString() {

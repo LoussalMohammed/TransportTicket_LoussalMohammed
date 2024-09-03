@@ -1,4 +1,4 @@
-package concole.app.tools;
+package org.app.tools;
 
 import java.sql.SQLException;
 import java.sql.Connection;

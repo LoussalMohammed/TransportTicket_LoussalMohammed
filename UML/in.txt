@@ -1,0 +1,128 @@
+/**
+JVM: java virtual machine
+JDK: ;;;; development kit
+JRE: ;;;; runtime enviroment
+JIT: just in time
+**/
+
+ ○ id(UUID): Identifiant unique du billet vendu par un partenaire.
+ ○ type_transport (Enum): Type de transport pour ce billet (avion, train, bus,
+ etc.).
+ ○ prix_achat (Decimal): Prix d'achat du billet auprès du partenaire.
+ ○ prix_vente (Decimal): Prix de vente du billet à l'utilisateur final.
+ ○ date_vente (DateTime): Date et heure de la vente du billet.
+ ○ statut_billet (Enum): Statut du billet (vendu, annulé, en attente)
+
+
+ package org.app.Services.Admin;
+
+import org.app.Models.Entities.Admin;
+import org.app.Models.Entities.Contract;
+import org.app.Models.Enums.Role;
+import org.app.tools.databaseC;
+
+import java.sql.*;
+import java.util.ArrayList;
+import java.util.List;
+
+public class AdminServices {
+    public Admin findById(int id) throws SQLException {
+        try (Connection connection = databaseC.getInstance().getConnection()) {
+            String sql = "SELECT * FROM administrator WHERE id = ?";
+            PreparedStatement statement = connection.prepareStatement(sql);
+            statement.setObject(1, id);
+            try (ResultSet resultSet = statement.executeQuery()) {
+
+                if (resultSet.next()) {
+                    return new Admin(
+                            resultSet.getInt("id"),
+                            resultSet.getString("firstName"),
+                            resultSet.getString("lastName"),
+                            resultSet.getString("email"),
+                            resultSet.getString("phone"),
+                            Role.fromString(resultSet.getString("role")),
+                            resultSet.getTimestamp("created_at").toLocalDateTime(),
+                            (List<Contract>) resultSet.getObject("contracts")
+                    );
+                } else {
+                    return null;
+                }
+            }
+        }
+    }
+
+    public ArrayList<Admin> getAllAdmin() throws SQLException {
+        ArrayList<Admin> Admins = new ArrayList<>(10);
+        try (Connection connection = databaseC.getInstance().getConnection()) {
+            String sql = "SELECT * FROM administrator LEFT JOIN contract " +
+                    "ON contract.id = administrator.contract_id";
+            PreparedStatement preparedStatement = connection.prepareStatement(sql);
+            ResultSet resultSet = preparedStatement.executeQuery();
+            while (resultSet.next()) {
+
+                Admin admin = new Admin(
+                        resultSet.getInt("id"),
+                        resultSet.getString("firstName"),
+                        resultSet.getString("lastName"),
+                        resultSet.getString("email"),
+                        resultSet.getString("phone"),
+                        Role.fromString(resultSet.getString("role")),
+                        resultSet.getTimestamp("created_at").toLocalDateTime(),
+                        (List<Contract>) resultSet.getObject("contract")
+                );
+                Admins.add(admin);
+            }
+
+        }
+        return Admins;
+    }
+
+
+
+    public void save(Admin admin) throws SQLException {
+        String sql = "INSERT INTO administratot (id, firstName, lastName, email, phone, role, created_at) VALUES (?, ?, ?, ?, ?, CAST(? AS role), ?)";
+
+
+        try (Connection connection = databaseC.getInstance().getConnection();
+             PreparedStatement statement = connection.prepareStatement(sql)) {
+
+            statement.setInt(1, person.getId());
+            statement.setString(2, person.getFirstName());
+            statement.setString(3, person.getLastName());
+            statement.setString(4, person.getEmail());
+            statement.setString(5, person.getPhone());
+            statement.setObject(6, person.getRole().name().toLowerCase(), java.sql.Types.OTHER); // Convert to lowercase
+            statement.setTimestamp(7, Timestamp.valueOf(person.getCreatedAt()));
+            System.out.println("SQL: " + sql);
+            System.out.println("Parameters: " + person.getId() + ", " + person.getFirstName() + ", " + person.getLastName() + ", " + person.getEmail() + ", " + person.getPhone() + ", " + person.getRole().name().toLowerCase() + ", " + person.getCreatedAt());
+
+
+            statement.executeUpdate();
+        }
+    }
+
+    public void update(Person person) throws SQLException {
+        String sql = "UPDATE person SET firstName = ?, lastName = ?, email = ?, phone = ?, role = ?, created_at = ? WHERE id = ?";
+        try (Connection connection = databaseC.getInstance().getConnection();
+             PreparedStatement statement = connection.prepareStatement(sql)) {
+
+            statement.setString(1, person.getFirstName());
+            statement.setString(2, person.getLastName());
+            statement.setString(3, person.getEmail());
+            statement.setString(4, person.getPhone());
+            statement.setObject(5, person.getRole().name().toLowerCase(), java.sql.Types.OTHER); // Convert to lowercase
+            statement.setTimestamp(6, Timestamp.valueOf(person.getCreatedAt()));
+            statement.setInt(7, person.getId());
+            System.out.println("SQL: " + sql);
+            System.out.println("Parameters: " + person.getId() + ", " + person.getFirstName() + ", " + person.getLastName() + ", " + person.getEmail() + ", " + person.getPhone() + ", " + person.getRole().name().toLowerCase() + ", " + person.getCreatedAt());
+
+
+            statement.executeUpdate();
+        }
+    }
+
+
+
+
+
+}

@@ -1,9 +1,9 @@
-package concole.app.Models.Entities;
+package org.app.Models.Entities;
 
-import concole.app.Models.enums.CurrentStatus;
+import org.app.Models.Enums.CurrentStatus;
 
 import java.math.BigDecimal;
-import java.util.Date;
+import java.sql.Date;
 import java.util.UUID;
 public class Contract {
     private UUID id;
@@ -16,8 +16,8 @@ public class Contract {
 
     public Contract(UUID id, Date initDate, Date endDate, BigDecimal specialTariff, String accordConditions, boolean renewed, CurrentStatus currentStatus) {
         this.id = id;
-        this.initDate = initDate;
-        this.endDate = endDate;
+        this.initDate = Date.valueOf(initDate.toLocalDate());
+        this.endDate = Date.valueOf(endDate.toLocalDate());
         this.specialTariff = specialTariff;
         this.accordConditions = accordConditions;
         this.renewed = renewed;

@@ -1,4 +1,4 @@
-package concole.app.tools;
+package org.app.tools;
 
 import java.sql.Connection;
 import java.sql.DriverManager;
@@ -20,9 +20,9 @@ public class databaseC {
     // Method to establish the database connection
     private void connect() throws SQLException {
         try {
-            this.url = concole.app.tools.DataFile.url();
-            this.username = concole.app.tools.DataFile.user();
-            this.password = concole.app.tools.DataFile.password();
+            this.url = org.app.tools.DataFile.url();
+            this.username = org.app.tools.DataFile.user();
+            this.password = org.app.tools.DataFile.password();
 
             this.connection = DriverManager.getConnection(url, username, password);
         } catch (SQLException e) {

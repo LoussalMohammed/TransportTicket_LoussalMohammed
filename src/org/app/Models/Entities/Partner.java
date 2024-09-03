@@ -1,9 +1,9 @@
-package concole.app.Models.Entities;
+package org.app.Models.Entities;
 
-import concole.app.Models.enums.PartenaryStatus;
-import concole.app.Models.enums.TransportType;
+import org.app.Models.Enums.PartenaryStatus;
+import org.app.Models.Enums.TransportType;
 
-import java.util.Date;
+import java.sql.Date;
 import java.util.UUID;
 
 public class Partner {

@@ -1,9 +1,9 @@
-package concole.app.Models.Entities;
+package org.app.Models.Entities;
 
 import java.util.Date;
 import java.util.UUID;
-import concole.app.Models.enums.ReductionType; // Assuming the enum is in the tools package
-import concole.app.Models.enums.OfferStatus;   // Assuming the enum is in the tools package
+import org.app.Models.Enums.ReductionType; // Assuming the enum is in the tools package
+import org.app.Models.Enums.OfferStatus;   // Assuming the enum is in the tools package
 
 public class PromotionalOffer {
     private UUID id;
