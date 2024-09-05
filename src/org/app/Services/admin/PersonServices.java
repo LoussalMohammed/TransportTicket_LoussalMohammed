@@ -5,12 +5,38 @@ import org.app.Models.Entities.Person;
 import org.app.tools.databaseC;
 
 import java.sql.*;
+import java.time.LocalDateTime;
 import java.util.ArrayList;
+import java.util.UUID;
 
 public class PersonServices {
+
+    public void delete(int id) throws SQLException {
+        String sql = "UPDATE person SET deleted_at = ? WHERE id = ?";
+        try (Connection connection = databaseC.getInstance().getConnection();
+             PreparedStatement statement = connection.prepareStatement(sql)) {
+
+            statement.setDate(1, Date.valueOf(LocalDateTime.now().toLocalDate()));
+            statement.setInt(2, id);
+
+            statement.executeUpdate();
+        }
+    }
+
+    public void restore(int id) throws SQLException {
+        String sql = "UPDATE person SET deleted_at = ? WHERE id = ?";
+        try (Connection connection = databaseC.getInstance().getConnection();
+             PreparedStatement statement = connection.prepareStatement(sql)) {
+
+            statement.setDate(1, null);
+            statement.setInt(2, id);
+
+            statement.executeUpdate();
+        }
+    }
     public Person findById(int id) throws SQLException {
         try (Connection connection = databaseC.getInstance().getConnection()) {
-            String sql = "SELECT * FROM person WHERE id = ?";
+            String sql = "SELECT * FROM person WHERE id = ? AND deleted_at IS NULL";
             PreparedStatement statement = connection.prepareStatement(sql);
             statement.setObject(1, id);
             try (ResultSet resultSet = statement.executeQuery()) {
@@ -36,7 +62,7 @@ public class PersonServices {
     public ArrayList<Person> getAllPersons() throws SQLException {
         ArrayList<Person> Persons = new ArrayList<>(10);
         try (Connection connection = databaseC.getInstance().getConnection()) {
-            String sql = "SELECT * FROM person";
+            String sql = "SELECT * FROM person WHERE deleted_at IS NULL";
             PreparedStatement preparedStatement = connection.prepareStatement(sql);
             ResultSet resultSet = preparedStatement.executeQuery();
             while (resultSet.next()) {

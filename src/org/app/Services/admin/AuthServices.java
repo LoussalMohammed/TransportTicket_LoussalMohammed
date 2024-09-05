@@ -11,7 +11,7 @@ import java.sql.*;
 public class AuthServices {
 
     public Admin authenticate(String email, String password) throws SQLException {
-        String sql = "SELECT * FROM administrator WHERE email = ?";
+        String sql = "SELECT * FROM administrator WHERE email = ? AND deleted_at IS NULL";
 
         try (Connection connection = databaseC.getInstance().getConnection();
              PreparedStatement statement = connection.prepareStatement(sql)) {

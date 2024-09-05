@@ -17,7 +17,7 @@ public class AdminServices {
 
     public Admin findById(int id) throws SQLException {
         try (Connection connection = databaseC.getInstance().getConnection()) {
-            String sql = "SELECT * FROM administrator WHERE id = ?";
+            String sql = "SELECT * FROM administrator WHERE id = ? AND deleted_at IS NULL";
             PreparedStatement statement = connection.prepareStatement(sql);
             statement.setInt(1, id);
             try (ResultSet resultSet = statement.executeQuery()) {
@@ -43,7 +43,7 @@ public class AdminServices {
     public ArrayList<Admin> getAllAdmin() throws SQLException {
         ArrayList<Admin> admins = new ArrayList<>();
         try (Connection connection = databaseC.getInstance().getConnection()) {
-            String sql = "SELECT * FROM administrator";
+            String sql = "SELECT * FROM administrator WHERE deleted_at IS NULL";
             PreparedStatement preparedStatement = connection.prepareStatement(sql);
             ResultSet resultSet = preparedStatement.executeQuery();
             while (resultSet.next()) {
@@ -63,7 +63,7 @@ public class AdminServices {
         return admins;
     }
 
-    public static void save(Admin admin) throws SQLException {
+    public void save(Admin admin) throws SQLException {
         String sql = "INSERT INTO administrator (id, firstName, lastName, email, phone, role, hashedPassword, created_at) VALUES (?, ?, ?, ?, ?, CAST(? AS role), ?, ?)";
         try (Connection connection = databaseC.getInstance().getConnection();
              PreparedStatement statement = connection.prepareStatement(sql)) {
