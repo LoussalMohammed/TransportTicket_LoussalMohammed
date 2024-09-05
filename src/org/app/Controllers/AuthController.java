@@ -15,7 +15,7 @@ public class AuthController {
         this.loginView = new LoginView();
     }
 
-    public void handleLogin() {
+    public boolean handleLogin() {
         boolean loggedIn = false;
 
         do {
@@ -30,7 +30,8 @@ public class AuthController {
                 if (admin != null) {
                     loggedIn = true;
                     LoginView.displayLoginResult(true);
-                    // You can proceed with logged-in user actions here
+
+                    return true;
                 } else {
                     LoginView.displayLoginResult(false);
                 }
@@ -51,5 +52,7 @@ public class AuthController {
         if (!loggedIn) {
             loginView.displayGoodbyeMessage();
         }
+
+        return false;
     }
 }
