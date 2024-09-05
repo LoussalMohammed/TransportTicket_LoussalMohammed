@@ -1,13 +1,13 @@
 package org.app.Models.Enums;
 
-public enum TransportType {
+public enum Transport {
     BUS("bus"),
     TRAIN("train"),
     AIRPLANE("airplane");
 
     private String transport;
 
-    TransportType(String Transport) {
+    Transport(String Transport) {
         this.transport = Transport;
     }
 
@@ -15,8 +15,8 @@ public enum TransportType {
         return this.transport;
     }
 
-    public static TransportType fromString(String transport) {
-        for (TransportType t : TransportType.values()) {
+    public static Transport fromString(String transport) {
+        for (Transport t : Transport.values()) {
             if (t.getTransport().equalsIgnoreCase(transport)) {
                 return t;
             }
