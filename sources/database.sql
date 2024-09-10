@@ -32,6 +32,7 @@ public static String createPerson() {
             "email VARCHAR(255) UNIQUE," +
             "phone VARCHAR(255) UNIQUE," +
             "role role DEFAULT 'user'," +
+            "password VARCHAR(255) NOT NULL"+
             "created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP";
 return createTable("person", tableDefinition);
 }
@@ -77,7 +78,7 @@ return query;
  * @return A SQL query string to create the 'partner' table.
  */
 public static String createPartner() {
-    String tableDefinition = "id SERIAL PRIMARY KEY," +
+    String tableDefinition = "id UUID PRIMARY KEY," +
             "companyName VARCHAR(255)," +
             "commercialContact VARCHAR(255)," +
             "transportType transport NOT NULL," +
@@ -183,17 +184,12 @@ public static String createTicket() {
             "promotionalOffer_id INTEGER REFERENCES promotionalOffer(id) ON UPDATE CASCADE ON DELETE CASCADE"; // Added foreign key
     return createTable("ticket", tableDefinition);
 }
-/**
- * Generates a SQL query to create a 'ticket' table.
- *
- * @return A SQL query string to create the 'ticket' table.
- */
-public static String createPartenaryContracts() {
-    String tableDefinition = "id SERIAL PRIMARY KEY," +
-            "partenar_id INT NOT NULL," +
-            "contract_id INT NOT NULL," +
-            "FOREIGN KEY (partner_id) REFERENCES partner(id) ON UPDATE CASCADE ON UPDATE DELETE," +
-            "FOREIGN KEY (contract_id) REFERENCES contract(id) ON UPDATE CASCADE ON UPDATE DELETE" +
-            "deleted_at TIMESTAMP DEFAULT NULL,";
-    return createTable("ticket", tableDefinition);
+
+
+public static String createContractPromotionalOffer() {
+    String tableDefinition = "contract_id UUID REFERENCES contract(id),"+
+    "promotional_offer_id UUID REFERENCES promotionaloffer(id),"+
+    "PRIMARY KEY (contract_id, promotional_offer_id)";
+
+    return createTable("contract_promotionalOffer", tableDefinition);
 }

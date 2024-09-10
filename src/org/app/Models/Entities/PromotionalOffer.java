@@ -1,11 +1,20 @@
 package org.app.Models.Entities;
 
+import java.sql.SQLException;
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.UUID;
+
+import org.app.Models.DAO.Admin.PromotionalOfferDAO;
 import org.app.Models.Enums.ReductionType; // Assuming the enum is in the tools package
 import org.app.Models.Enums.OfferStatus;   // Assuming the enum is in the tools package
+import org.views.admin.promotonalOffer.PromotionalOfferView;
 
 public class PromotionalOffer {
+
+    private static PromotionalOfferDAO promotionalOfferDAO = new PromotionalOfferDAO();
+
+    private static PromotionalOfferView promotionalOfferView = new PromotionalOfferView();
     private UUID id;
     private String name;
     private String description;
@@ -15,6 +24,7 @@ public class PromotionalOffer {
     private Float reductionValue;
     private String condition;
     private OfferStatus offerStatus;
+
 
     // Constructor
     public PromotionalOffer(UUID id, String name, String description,
@@ -33,7 +43,9 @@ public class PromotionalOffer {
     }
 
     // Getters and Setters
-    public UUID getId() {
+    public UUID
+
+    getId() {
         return id;
     }
 
@@ -100,10 +112,12 @@ public class PromotionalOffer {
     public OfferStatus getOfferStatus() {
         return offerStatus;
     }
-
     public void setOfferStatus(OfferStatus offerStatus) {
         this.offerStatus = offerStatus;
     }
+
+
+
 
     @Override
     public String toString() {
@@ -118,5 +132,33 @@ public class PromotionalOffer {
                 ", Condition=" + condition +
                 ", Offer Status=" + offerStatus +
                 '}';
+    }
+
+    public static void getPromotionalOfferByID() throws SQLException {
+        UUID id = promotionalOfferView.getOfferId();
+        PromotionalOffer promotionalOffer = promotionalOfferDAO.findById(id);
+        promotionalOfferView.displayPromotionalOffer(promotionalOffer);
+    }
+    public static void getAllPromotionalOffers() throws SQLException {
+        ArrayList<PromotionalOffer> promotionalOffers = (ArrayList<PromotionalOffer>) promotionalOfferDAO.getPromotionalOffers();
+        promotionalOfferView.displayPromotionalOffersList(promotionalOffers);
+    }
+    public static void addPromotionalOffer() throws SQLException {
+        PromotionalOffer newPromotionalOffer = promotionalOfferView.addOffer();
+        promotionalOfferDAO.save(newPromotionalOffer); // Implement this method to add an admin
+    }
+    public static void updatePromotionalOffer() throws SQLException {
+        UUID offerId = promotionalOfferView.getOfferId();
+        PromotionalOffer updatedPromotionalOffer = promotionalOfferDAO.findById(offerId);
+        PromotionalOffer updatePromotionalOffer = promotionalOfferView.updateOffer(updatedPromotionalOffer);
+        promotionalOfferDAO.update(updatePromotionalOffer); // Implement this method to edit an admin
+    }
+    public static void deletePromotionalOffer() throws SQLException {
+        UUID deletedAdminId = promotionalOfferView.getOfferId();
+        promotionalOfferDAO.delete(deletedAdminId); // Implement this method to delete an admin
+    }
+    public static void restorePromotionalOffer() throws SQLException {
+        UUID restoredAdminId = promotionalOfferView.getOfferId();
+        promotionalOfferDAO.restore(restoredAdminId);
     }
 }

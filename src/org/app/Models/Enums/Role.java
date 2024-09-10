@@ -1,8 +1,8 @@
 package org.app.Models.Enums;
 
 public enum Role {
-    USER("user"),
-    ADMIN("admin");
+    USER("USER"),
+    ADMIN("ADMIN");
 
     private String role;
 

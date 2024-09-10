@@ -1,28 +1,41 @@
 package org.app.Models.Entities;
 
 import java.math.BigDecimal;
+import java.sql.SQLException;
+import java.util.List;
+import java.util.Scanner;
 import java.util.UUID;
-import org.app.Models.Enums.TransportType;
+
+import org.app.Models.DAO.Admin.TicketDAO;
+import org.app.Models.Enums.Transport;
 import java.util.Date;
 import org.app.Models.Enums.TicketStatus;
+import org.app.Models.DAO.Admin.TicketDAO;
+import org.views.admin.ticket.TicketView;
 
 public class Ticket {
+    private static TicketDAO ticketDAO = new TicketDAO();
+    private static TicketView ticketView = new TicketView();
+    private static Scanner scanner = new Scanner(System.in);
     private UUID id;
-    private TransportType transportType;
+    private Transport transportType;
     private BigDecimal buyingPrice;
     private BigDecimal sellingPrice;
     private Date sellingDate;
     private TicketStatus ticketStatus;
 
+    private UUID contract_id;
+
     // Constructor
-    public Ticket(UUID id, TransportType transportType, BigDecimal buyingPrice,
-                  BigDecimal sellingPrice, Date sellingDate, TicketStatus ticketStatus) {
+    public Ticket(UUID id, Transport transportType, BigDecimal buyingPrice,
+                  BigDecimal sellingPrice, Date sellingDate, TicketStatus ticketStatus, UUID contract_id) {
         this.id = id;
         this.transportType = transportType;
         this.buyingPrice = buyingPrice;
         this.sellingPrice = sellingPrice;
         this.sellingDate = sellingDate;
         this.ticketStatus = ticketStatus;
+        this.contract_id = contract_id;
     }
 
     // Getters and Setters
@@ -34,11 +47,11 @@ public class Ticket {
         this.id = id;
     }
 
-    public TransportType getTransportType() {
+    public Transport getTransportType() {
         return transportType;
     }
 
-    public void setTransportType(TransportType transportType) {
+    public void setTransportType(Transport transportType) {
         this.transportType = transportType;
     }
 
@@ -74,6 +87,14 @@ public class Ticket {
         this.ticketStatus = ticketStatus;
     }
 
+    public UUID getContract_id() {
+        return this.contract_id;
+    }
+
+    public void setContract_id(UUID contract_id) {
+        this.contract_id = contract_id;
+    }
+
     @Override
     public String toString() {
         return "Person{" +
@@ -84,5 +105,44 @@ public class Ticket {
                 ", Selling Date='" + sellingDate + '\'' +
                 ", Ticket Status=" + ticketStatus +
                 '}';
+    }
+
+    public static void getTicketById() throws SQLException {
+        java.util.UUID ticketID = ticketView.getTicketId();
+        Ticket ticket = ticketDAO.findById(ticketID);
+        ticketView.displayTicket(ticket);
+    }
+
+    public static void getAllTickets() throws SQLException {
+        List<Ticket> tickets = ticketDAO.getTickets();
+        ticketView.displayTicketsList(tickets);
+    }
+
+    public static void addTicket() throws SQLException {
+        Ticket ticket = ticketView.addTicket();
+        ticketDAO.save(ticket);
+    }
+
+    public static void updateTicket() {
+        ticketView.updateTicket();
+    }
+
+    public static void deleteTicket() throws SQLException {
+        System.out.print("Enter ticket ID to delete (UUID format): ");
+        UUID deleteTicketId = UUID.fromString(scanner.nextLine().trim());
+        TicketDAO ticketDAO1 = new TicketDAO();
+        Ticket ticketToDelete = ticketDAO1.findById(deleteTicketId);
+        if (ticketToDelete != null) {
+            ticketDAO1.delete(deleteTicketId);
+            System.out.println("Ticket successfully deleted.");
+        } else {
+            System.out.println("Ticket not found.");
+        }
+    }
+    public static void restoreTicket() throws SQLException {
+        System.out.print("Enter ticket ID to restore (UUID format): ");
+        UUID restoreTicketId = UUID.fromString(scanner.nextLine().trim());
+        ticketDAO.delete(restoreTicketId);
+        System.out.println("Ticket successfully restored.");
     }
 }
