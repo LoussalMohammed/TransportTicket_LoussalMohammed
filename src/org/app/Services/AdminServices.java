@@ -13,8 +13,7 @@ public class AdminServices {
     private final AdminDAO adminDAO;
     private final AdminView adminView;
 
-    public AdminServices
-            () {
+    public AdminServices() {
         this.adminDAO = new AdminDAO();
         this.adminView = new AdminView();
     }

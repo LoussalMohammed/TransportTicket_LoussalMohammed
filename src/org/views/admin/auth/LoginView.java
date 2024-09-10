@@ -2,6 +2,8 @@ package org.views.admin.auth;
 
 import org.app.Models.Helpers.PasswordUtil;
 
+import java.util.HashMap;
+import java.util.Map;
 import java.util.Scanner;
 
 public class LoginView {
@@ -13,24 +15,32 @@ public class LoginView {
         System.out.println("==================================================================");
         System.out.print("Enter your email: ");
         String email = scanner.nextLine().trim();
+        if(scanner.hasNextLine()) {
+            scanner.nextLine();
+        }
         System.out.print("Enter your password: ");
         String password = scanner.nextLine().trim();
         return new String[]{email, password};
     }
 
-    public String[] promptForSignUp() {
+    public Map<String, String> promptForSignUp() {
+        Map<String, String> userData = new HashMap<>();
         System.out.println("\n================================================================");
         System.out.println("                     Welcome to the SignUp Panel             ");
-        System.out.println("==================================================================");
+        System.out.println("==================================================================\n");
+        scanner.nextLine();
         System.out.print("Enter your First Name: ");
-        String firstName = scanner.nextLine().trim();
+        userData.put("firstName", scanner.nextLine().trim());
         System.out.print("Enter your Last Name: ");
-        String lastName = scanner.nextLine().trim();
+        userData.put("lastName", scanner.nextLine().trim());
         System.out.print("Enter your email: ");
-        String email = scanner.nextLine().trim();
+        userData.put("email", scanner.nextLine().trim());
+        System.out.print("Enter your phone Number: ");
+        userData.put("phone", scanner.nextLine().trim());
         System.out.print("Enter your password: ");
-        String password = scanner.nextLine().trim();
-        return new String[]{firstName, lastName,email, password};
+        userData.put("password", scanner.nextLine().trim());
+
+        return userData;
     }
 
 

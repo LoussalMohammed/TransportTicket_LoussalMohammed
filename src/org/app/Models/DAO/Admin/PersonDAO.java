@@ -11,7 +11,7 @@ import java.util.ArrayList;
 public class PersonDAO {
 
     public void delete(int id) throws SQLException {
-        String sql = "UPDATE persons SET deleted_at = ? WHERE id = ?";
+        String sql = "UPDATE persons SET deleted_at = ? WHERE id = ? AND role = 'USER'";
         try (Connection connection = databaseC.getInstance().getConnection();
              PreparedStatement statement = connection.prepareStatement(sql)) {
 
@@ -23,7 +23,7 @@ public class PersonDAO {
     }
 
     public void restore(int id) throws SQLException {
-        String sql = "UPDATE persons SET deleted_at = ? WHERE id = ?";
+        String sql = "UPDATE persons SET deleted_at = ? WHERE id = ? AND role = 'USER'";
         try (Connection connection = databaseC.getInstance().getConnection();
              PreparedStatement statement = connection.prepareStatement(sql)) {
 
@@ -35,7 +35,7 @@ public class PersonDAO {
     }
     public Person findById(int id) throws SQLException {
         try (Connection connection = databaseC.getInstance().getConnection()) {
-            String sql = "SELECT * FROM persons WHERE id = ? AND deleted_at IS NULL";
+            String sql = "SELECT * FROM persons WHERE id = ? AND deleted_at IS NULL AND role = 'USER'";
             PreparedStatement statement = connection.prepareStatement(sql);
             statement.setObject(1, id);
             try (ResultSet resultSet = statement.executeQuery()) {
@@ -61,7 +61,7 @@ public class PersonDAO {
     public ArrayList<Person> getAllPersons() throws SQLException {
         ArrayList<Person> Persons = new ArrayList<>(10);
         try (Connection connection = databaseC.getInstance().getConnection()) {
-            String sql = "SELECT * FROM persons WHERE deleted_at IS NULL";
+            String sql = "SELECT * FROM persons WHERE deleted_at IS NULL AND role = 'USER'";
             PreparedStatement preparedStatement = connection.prepareStatement(sql);
             ResultSet resultSet = preparedStatement.executeQuery();
             while (resultSet.next()) {
@@ -86,7 +86,7 @@ public class PersonDAO {
 
 
     public void save(Person person) throws SQLException {
-        String sql = "INSERT INTO persons (id, firstName, lastName, email, phone, role, hashedPassword, created_at) VALUES (?, ?, ?, ?, ?, CAST(? AS role), ?, ?)";
+        String sql = "INSERT INTO persons (id, firstName, lastName, email, phone, hashedPassword, created_at) VALUES (?, ?, ?, ?, ?, ?, ?)";
 
 
         try (Connection connection = databaseC.getInstance().getConnection();
@@ -97,9 +97,8 @@ public class PersonDAO {
             statement.setString(3, person.getLastName());
             statement.setString(4, person.getEmail());
             statement.setString(5, person.getPhone());
-            statement.setObject(6, person.getRole().name().toLowerCase(), java.sql.Types.OTHER); // Convert to lowercase
-            statement.setString(7, person.getHashedPassword());
-            statement.setTimestamp(8, Timestamp.valueOf(person.getCreatedAt()));
+            statement.setString(6, person.getHashedPassword());
+            statement.setTimestamp(7, Timestamp.valueOf(person.getCreatedAt()));
             System.out.println("SQL: " + sql);
             System.out.println("Parameters: " + person.getId() + ", " + person.getFirstName() + ", " + person.getLastName() + ", " + person.getEmail() + ", " + person.getPhone() + ", " + person.getRole().name().toLowerCase() + ", " + person.getCreatedAt());
 
@@ -109,7 +108,7 @@ public class PersonDAO {
     }
 
     public void update(Person person) throws SQLException {
-        String sql = "UPDATE persons SET firstName = ?, lastName = ?, email = ?, phone = ?, role = ?, created_at = ? WHERE id = ? AND deleted_at IS NULL";
+        String sql = "UPDATE persons SET firstName = ?, lastName = ?, email = ?, phone = ?, role = ?, created_at = ? WHERE id = ? AND deleted_at IS NULL  AND role = 'USER'";
         try (Connection connection = databaseC.getInstance().getConnection();
              PreparedStatement statement = connection.prepareStatement(sql)) {
 
@@ -131,5 +130,27 @@ public class PersonDAO {
 
 
 
+    public Integer getLastId() {
+        String sql = "SELECT MAX(id) AS id FROM persons";
+        try (Connection connection = databaseC.getInstance().getConnection();
+                PreparedStatement statement = connection.prepareStatement(sql)) {
+            ResultSet resultSet = statement.executeQuery();
+            try {
+                if(resultSet.next()) {
+                    Integer id = resultSet.getInt("id");
+                    return id;
+                } else {
+                    return null;
+                }
+            } catch (SQLException e) {
+                throw new RuntimeException(e);
+            }
+        } catch (SQLException e) {
+            throw new RuntimeException(e);
+        }
+
+    }
+
 
 }
+

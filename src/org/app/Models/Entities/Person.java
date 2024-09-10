@@ -1,12 +1,20 @@
 package org.app.Models.Entities;
 
+import org.app.Models.DAO.Admin.AdminDAO;
+import org.app.Models.DAO.Admin.PersonDAO;
 import org.app.Models.Enums.Role;
 import org.app.Models.Helpers.PasswordUtil;
+import org.views.admin.person.AdminView;
+import org.views.admin.person.PersonView;
 
 import java.sql.Date;
+import java.sql.SQLException;
 import java.time.LocalDateTime;
+import java.util.ArrayList;
 
 public class Person {
+    private static PersonView personView = new PersonView();
+    private static PersonDAO personDAO = new PersonDAO();
     private int id; // auto-incrementing ID
     private String firstName;
     private String lastName;
@@ -114,5 +122,36 @@ public class Person {
                 ", role=" + role +
                 ", createdAt=" + createdAt +
                 '}';
+    }
+
+    public static void getPersonById() throws SQLException {
+        int id = personView.getPerson();
+        Person person = personDAO.findById(id);
+        personView.displayPerson(person);
+    }
+
+    public static void getAllPersons() throws SQLException {
+        ArrayList<Person> persons = personDAO.getAllPersons();
+        personView.displayPersonsList(persons);
+    }
+
+    public static void addPerson() throws SQLException{
+        Person newPerson = personView.addPerson();
+        personDAO.save(newPerson);
+    }
+
+    public static void updatePerson() throws SQLException {
+        Person updatePerson = personView.addPerson();
+        personDAO.update(updatePerson);
+    }
+
+    public static void deletePerson() throws SQLException {
+        int deletedPersonId = personView.getPerson();
+        personDAO.delete(deletedPersonId);
+    }
+
+    public static void restorePerson() throws SQLException {
+        int restoredPersonId = personView.getPerson();
+        personDAO.restore(restoredPersonId);
     }
 }

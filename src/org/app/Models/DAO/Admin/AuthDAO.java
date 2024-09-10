@@ -1,6 +1,7 @@
 package org.app.Models.DAO.Admin;
 
 import org.app.Models.Entities.Admin;
+import org.app.Models.Entities.Person;
 import org.app.Models.Enums.Role;
 import org.app.Models.Helpers.PasswordUtil;
 import org.app.tools.databaseC;
@@ -10,8 +11,8 @@ import java.sql.*;
 
 public class AuthDAO {
 
-    public Admin authenticate(String email, String password) throws SQLException {
-        String sql = "SELECT * FROM administrators WHERE email = ? AND deleted_at IS NULL";
+    public Person authenticate(String email, String password) throws SQLException {
+        String sql = "SELECT * FROM persons WHERE email = ? AND deleted_at IS NULL";
 
         try (Connection connection = databaseC.getInstance().getConnection();
              PreparedStatement statement = connection.prepareStatement(sql)) {
@@ -23,7 +24,7 @@ public class AuthDAO {
                     String hashedPassword = resultSet.getString("hashedPassword");
                     if(PasswordUtil.checkPassword(password, hashedPassword)) {
                         // Create Admin object from the retrieved data
-                        return new Admin(
+                        return new Person(
                                 resultSet.getInt("id"),
                                 resultSet.getString("firstName"),
                                 resultSet.getString("lastName"),

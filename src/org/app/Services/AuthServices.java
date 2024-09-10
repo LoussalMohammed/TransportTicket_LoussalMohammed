@@ -1,52 +1,99 @@
 package org.app.Services;
 
+import org.app.Models.DAO.Admin.PersonDAO;
 import org.app.Models.Entities.Admin;
 import org.app.Models.DAO.Admin.AuthDAO;
+import org.app.Models.Entities.Person;
+import org.app.Models.Enums.Role;
 import org.views.admin.auth.LoginView;
 
 import java.sql.SQLException;
+import java.time.LocalDateTime;
+import java.util.Map;
 
 public class AuthServices {
     private final AuthDAO authDAO;
     private final LoginView loginView;
+    private final PersonDAO personDAO;
 
     public AuthServices() {
         this.authDAO = new AuthDAO();
         this.loginView = new LoginView();
+        this.personDAO = new PersonDAO();
     }
 
-    public boolean handleLogin() {
+    public boolean handleLogin() throws SQLException {
         boolean loggedIn = false;
 
+        int typeAuth = loginView.AuthType();
         do {
-            try {
-                String[] credentials = loginView.promptForLogin();
-                String email = credentials[0];  // Use email instead of username
-                String password = credentials[1];
+            if(typeAuth == 1) {
+                try {
+                    String[] credentials = loginView.promptForLogin();
+                    String email = credentials[0];  // Use email instead of username
+                    String password = credentials[1];
 
-                // Authenticate the admin and check if logged in
-                Admin admin = authDAO.authenticate(email, password);
+                    // Authenticate the admin and check if logged in
+                    Person person = authDAO.authenticate(email, password);
 
-                if (admin != null) {
-                    loggedIn = true;
-                    LoginView.displayLoginResult(true);
+                    if (person != null) {
+                        loggedIn = true;
+                        LoginView.displayLoginResult(true);
 
-                    return true;
-                } else {
-                    LoginView.displayLoginResult(false);
-                }
+                        return true;
+                    } else {
+                        LoginView.displayLoginResult(false);
+                    }
 
-                // Ask if the user wants to retry if not logged in
-                if (!loggedIn && !loginView.askRetry()) {
+                    // Ask if the user wants to retry if not logged in
+                    if (!loggedIn && !loginView.askRetry()) {
+                        break;
+                    }
+                } catch (SQLException e) {
+                    // Handle SQL exceptions, such as connection errors
+                    System.err.println("An error occurred during login: " + e.getMessage());
+                    // Optionally, show an error message to the user
+                    loginView.displayErrorMessage("Login failed due to a system error. Please try again later.");
                     break;
                 }
-            } catch (SQLException e) {
-                // Handle SQL exceptions, such as connection errors
-                System.err.println("An error occurred during login: " + e.getMessage());
-                // Optionally, show an error message to the user
-                loginView.displayErrorMessage("Login failed due to a system error. Please try again later.");
-                break;
+
             }
+            else if (typeAuth == 2) {
+                Map<String, String> credentials = loginView.promptForSignUp();
+                Integer id = personDAO.getLastId() + 1;
+
+
+                // Create User:
+                Person person = new Person(id, credentials.get("firstName"), credentials.get("lastName"), credentials.get("email"), credentials.get("phone"), Role.USER, credentials.get("password"), LocalDateTime.now());
+
+                try {
+                    personDAO.save(person);
+                    String[] loginCredentials = loginView.promptForLogin();
+                    String email = loginCredentials[0];
+                    String password = loginCredentials[1];
+
+                    Person personLogin = authDAO.authenticate(email, password);
+
+                    if (personLogin != null) {
+                        loggedIn = true;
+                        LoginView.displayLoginResult(true);
+
+                        return true;
+                    } else {
+                        LoginView.displayLoginResult(false);
+                    }
+
+                    // Ask if the user wants to retry if not logged in
+                    if (!loggedIn && !loginView.askRetry()) {
+                        break;
+                    }
+                } catch (SQLException e) {
+                    System.err.println(e);
+                }
+
+
+            }
+
         } while (!loggedIn);
 
         if (!loggedIn) {
