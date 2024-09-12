@@ -33,7 +33,8 @@ public static String createPerson() {
             "phone VARCHAR(255) UNIQUE," +
             "role role DEFAULT 'user'," +
             "password VARCHAR(255) NOT NULL"+
-            "created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP";
+            "created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,"+
+            "deleted_at TIMESTAMP DEFAULT NULL";
 return createTable("person", tableDefinition);
 }
 
@@ -85,7 +86,8 @@ public static String createPartner() {
             "geographicZone VARCHAR(255)," +
             "spacialCondition TEXT," +
             "partnerStatus partnerStatus DEFAULT 'ACTIVE' NOT NULL," +
-            "created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP";
+            "created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,"+
+            "deleted_at TIMESTAMP DEFAULT NULL";
 return createTable("partner", tableDefinition);
 }
 
@@ -113,7 +115,8 @@ public static String createContract() {
             "accordConditions VARCHAR(5000)," +
             "renewed BOOL DEFAULT true NOT NULL," +
             "currentStatus currentStatus DEFAULT 'IN PROGRESS'," +
-            "partner_id INTEGER REFERENCES partner(id) ON UPDATE CASCADE ON DELETE CASCADE"; // Added foreign key
+            "partner_id INTEGER REFERENCES partners(id) ON UPDATE CASCADE ON DELETE CASCADE,"+ // Added foreign key
+            "deleted_at TIMESTAMP DEFAULT NULL";
     return createTable("contract", tableDefinition);
 }
 
@@ -153,7 +156,8 @@ public static String createPromotionalOffer() {
             "reductionType reductionType NOT NULL," +
             "reductionValue DECIMAL(40, 15) NOT NULL," +
             "currentStatus offerStatus DEFAULT 'ACTIVE'," +
-            "contract_id INTEGER REFERENCES contract(id) ON UPDATE CASCADE ON DELETE CASCADE"; // Added foreign key
+            "contract_id INTEGER REFERENCES contracts(id) ON UPDATE CASCADE ON DELETE CASCADE"+
+            "deleted_at TIMESTAMP DEFAULT NULL";
     return createTable("promotionalOffer", tableDefinition);
 }
 
@@ -180,8 +184,10 @@ public static String createTicket() {
             "sellingPrice DECIMAL(40, 15) NOT NULL," +
             "sellingDate TIMESTAMP NOT NULL," +
             "ticketStatus ticketStatus DEFAULT 'WAITING' NOT NULL," +
-            "contract_id INTEGER REFERENCES contract(id) ON UPDATE CASCADE ON DELETE CASCADE," + // Added foreign key
-            "promotionalOffer_id INTEGER REFERENCES promotionalOffer(id) ON UPDATE CASCADE ON DELETE CASCADE"; // Added foreign key
+            "contract_id INTEGER REFERENCES contracts(id) ON UPDATE CASCADE ON DELETE CASCADE," + // Added foreign key
+            "promotionalOffer_id INTEGER REFERENCES promotionalOffers(id) ON UPDATE CASCADE ON DELETE CASCADE,"+ // Added foreign key
+            "transporter VARCHAR(255) ,"+
+            "deleted_at TIMESTAMP DEFAULT NULL";
     return createTable("ticket", tableDefinition);
 }
 
@@ -189,7 +195,38 @@ public static String createTicket() {
 public static String createContractPromotionalOffer() {
     String tableDefinition = "contract_id UUID REFERENCES contract(id),"+
     "promotional_offer_id UUID REFERENCES promotionaloffer(id),"+
-    "PRIMARY KEY (contract_id, promotional_offer_id)";
+    "PRIMARY KEY (contract_id, promotional_offer_id),"+
+    "deleted_at TIMESTAMP DEFAULT NULL";
 
     return createTable("contract_promotionalOffer", tableDefinition);
+}
+
+public static String createRoute() {
+    String tableDefinition = "id SERIAL PRIMARY KEY,"+
+    "departureCity VARCHAR(255) NOT NULL,"+
+    "destinationCity VARCHAR(255) NOT NULL,"+
+    "departureDate VARCHAR(255) NOT NULL,"+
+    "price DECIMAL(20, 25) NOT NULL,"+
+    "ticketId UUID NOT NULL,"+
+    "FOREIGN KEY (ticketId) REFERENCES tickets(id) ON CASCADE UPDATE ON CASCADE DELETE,"+
+    "partnerId UUID NOT NULL,"+
+    "FOREIGN KEY (partnerId) REFERENCES partners(id) ON CASCADE UPDATE ON CASCADE DELETE,"+
+    "deleted_at TIMESTAMP DEFAULT NULL";
+
+return createTable("routes", tableDefinition);
+}
+
+public static String createReservation() {
+    String tableDefinition = "id SERIAL PRIMARY KEY,"+
+    "reserved_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,"+
+    "canceled_at TIMESTAMP DEFAULT NULL,"+
+    "clientId INT NOT NULL,"+
+    "FOREIGN KEY (clientId) REFERENCES persons(id),"+
+    "ticketId UUID NOT NULL,"+
+    "FOREIGN KEY (ticketId) REFERENCES tickets(id) ON CASCADE UPDATE ON CASCADE DELETE,"+
+    "partnerId UUID NOT NULL,"+
+    "FOREIGN KEY (partnerId) REFERENCES partners(id) ON CASCADE UPDATE ON CASCADE DELETE"+
+    "deleted_at TIMESTAMP DEFAULT NULL";
+
+return createTable("routes", tableDefinition);
 }
