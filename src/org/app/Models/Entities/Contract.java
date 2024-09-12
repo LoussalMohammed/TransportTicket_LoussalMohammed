@@ -2,6 +2,7 @@ package org.app.Models.Entities;
 
 import org.app.Models.DAO.Admin.ContractDAO;
 import org.app.Models.Enums.CurrentStatus;
+import org.app.Models.Helpers.LevenshteinDistance;
 import org.views.admin.contract.ContractView;
 
 import java.math.BigDecimal;
@@ -180,7 +181,7 @@ public class Contract {
     public static void deleteContract() throws  SQLException {
         UUID deleteContractId = contractView.getContract();
         Contract contractToDelete = contractDAO.findById(deleteContractId);
-        if (contractToDelete != null) {
+        if (contractToDelete != null  && LevenshteinDistance.confirmDeletion()) {
             contractDAO.delete(deleteContractId);
             System.out.println("Contract successfully deleted.");
         } else {

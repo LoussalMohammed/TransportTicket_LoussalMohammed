@@ -53,11 +53,12 @@ public class PartnerView {
         System.out.println("\n=====================================================================================================================================");
         System.out.println("|        Partner ID       |     Company Name     |    Commercial Contact    |     Transport Type     |   Status  |    Created At   |");
         System.out.println("=====================================================================================================================================");
-        for (Partner partner : partners) {
-            System.out.printf("| %21s | %20s | %22s | %21s | %8s | %16s |\n",
-                    partner.getId(), partner.getCompanyName(), partner.getCommercialContact(),
-                    partner.getTransport(), partner.getPartenaryStatus(), partner.getCreatedAt());
-        }
+        partners.stream()
+                .forEach(partner -> {
+                    System.out.printf("| %21s | %20s | %22s | %21s | %8s | %16s |\n",
+                            partner.getId(), partner.getCompanyName(), partner.getCommercialContact(),
+                            partner.getTransport(), partner.getPartenaryStatus(), partner.getCreatedAt());
+                });
         System.out.println("=====================================================================================================================================\n");
     }
 

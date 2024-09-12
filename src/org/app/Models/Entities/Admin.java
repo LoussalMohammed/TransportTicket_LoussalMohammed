@@ -9,10 +9,14 @@ import java.sql.SQLException;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Scanner;
+import org.app.Models.Helpers.LevenshteinDistance;
 
 public class Admin extends Person {
     private static AdminView adminView = new AdminView();
     private static AdminDAO adminDAO = new AdminDAO();
+
+    private static Scanner scanner = new Scanner(System.in);
 
     public Admin(int id, String firstName, String lastName, String email, String phone, Role role, String hashedPassword, LocalDateTime createdAt) {
         super(id, firstName, lastName, email, phone, role, hashedPassword,createdAt);
@@ -50,11 +54,15 @@ public class Admin extends Person {
 
     public static void deleteAdmin() throws SQLException {
         int deletedAdminId = adminView.getAdmin();
-        adminDAO.delete(deletedAdminId); // Implement this method to delete an admin
+        if(LevenshteinDistance.confirmDeletion()) {
+            adminDAO.delete(deletedAdminId); // Implement this method to delete an admin
+        }
     }
 
     public static void restoreAdmin() throws SQLException {
         int restoredAdminId = adminView.getAdmin();
         adminDAO.restore(restoredAdminId); // Implement this method to restore an admin
     }
+
+
 }

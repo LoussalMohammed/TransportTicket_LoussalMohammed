@@ -11,6 +11,7 @@ import org.app.Models.Enums.Transport;
 import java.util.Date;
 import org.app.Models.Enums.TicketStatus;
 import org.app.Models.DAO.Admin.TicketDAO;
+import org.app.Models.Helpers.LevenshteinDistance;
 import org.views.admin.ticket.TicketView;
 
 public class Ticket {
@@ -26,9 +27,10 @@ public class Ticket {
 
     private UUID contract_id;
 
+    private String transporter;
     // Constructor
     public Ticket(UUID id, Transport transportType, BigDecimal buyingPrice,
-                  BigDecimal sellingPrice, Date sellingDate, TicketStatus ticketStatus, UUID contract_id) {
+                  BigDecimal sellingPrice, Date sellingDate, TicketStatus ticketStatus, UUID contract_id, String transporter) {
         this.id = id;
         this.transportType = transportType;
         this.buyingPrice = buyingPrice;
@@ -36,6 +38,7 @@ public class Ticket {
         this.sellingDate = sellingDate;
         this.ticketStatus = ticketStatus;
         this.contract_id = contract_id;
+        this.transporter = transporter;
     }
 
     // Getters and Setters
@@ -95,6 +98,14 @@ public class Ticket {
         this.contract_id = contract_id;
     }
 
+    public String getTransporter() {
+        return transporter;
+    }
+
+    public void setTransporter(String transporter) {
+        this.transporter = transporter;
+    }
+
     @Override
     public String toString() {
         return "Person{" +
@@ -132,17 +143,15 @@ public class Ticket {
         UUID deleteTicketId = UUID.fromString(scanner.nextLine().trim());
         TicketDAO ticketDAO1 = new TicketDAO();
         Ticket ticketToDelete = ticketDAO1.findById(deleteTicketId);
-        if (ticketToDelete != null) {
+        if (ticketToDelete != null && LevenshteinDistance.confirmDeletion()) {
             ticketDAO1.delete(deleteTicketId);
             System.out.println("Ticket successfully deleted.");
-        } else {
-            System.out.println("Ticket not found.");
         }
     }
     public static void restoreTicket() throws SQLException {
         System.out.print("Enter ticket ID to restore (UUID format): ");
         UUID restoreTicketId = UUID.fromString(scanner.nextLine().trim());
-        ticketDAO.delete(restoreTicketId);
+        ticketDAO.restore(restoreTicketId);
         System.out.println("Ticket successfully restored.");
     }
 }

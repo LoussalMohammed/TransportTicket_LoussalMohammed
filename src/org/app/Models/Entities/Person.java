@@ -3,6 +3,7 @@ package org.app.Models.Entities;
 import org.app.Models.DAO.Admin.AdminDAO;
 import org.app.Models.DAO.Admin.PersonDAO;
 import org.app.Models.Enums.Role;
+import org.app.Models.Helpers.LevenshteinDistance;
 import org.app.Models.Helpers.PasswordUtil;
 import org.views.admin.person.AdminView;
 import org.views.admin.person.PersonView;
@@ -147,7 +148,10 @@ public class Person {
 
     public static void deletePerson() throws SQLException {
         int deletedPersonId = personView.getPerson();
-        personDAO.delete(deletedPersonId);
+        if(LevenshteinDistance.confirmDeletion()) {
+            personDAO.delete(deletedPersonId);
+        }
+
     }
 
     public static void restorePerson() throws SQLException {

@@ -44,23 +44,24 @@ public class TicketView {
     }
 
     public void displayTicket(Ticket ticket) {
-        System.out.println("\n=====================================================================================================================================");
-        System.out.println("|        Ticket ID        |     Transport Type     |    Buying Price    |    Selling Price    |   Selling Date   |   Status  |");
-        System.out.println("=====================================================================================================================================");
-        System.out.printf("| %21s | %20s | %18s | %18s | %17s | %8s |\n",
-                ticket.getId(), ticket.getTransportType(), ticket.getBuyingPrice(), ticket.getSellingPrice(), ticket.getSellingDate(), ticket.getTicketStatus());
+        System.out.println("\n==========================================================================================================================================================================================");
+        System.out.println("|              Ticket ID                |     Transport Type     |       Buying Price    |       Selling Price    |   Selling Date     |     Status     |  Transporter  |");
+        System.out.println("============================================================================================================================================================================================");
+        System.out.printf("| %21s | %24s | %20s | %20s | %20s | %12s | %14s |\n",
+                ticket.getId(), ticket.getTransportType(), ticket.getBuyingPrice(), ticket.getSellingPrice(), ticket.getSellingDate(), ticket.getTicketStatus(), ticket.getTransporter());
         System.out.println("=====================================================================================================================================\n");
     }
 
     public void displayTicketsList(List<Ticket> tickets) {
-        System.out.println("\n=====================================================================================================================================");
-        System.out.println("|        Ticket ID        |     Transport Type     |    Buying Price    |    Selling Price    |   Selling Date   |   Status  |");
-        System.out.println("=====================================================================================================================================");
-        for (Ticket ticket : tickets) {
-            System.out.printf("| %21s | %20s | %18s | %18s | %17s | %8s |\n",
-                    ticket.getId(), ticket.getTransportType(), ticket.getBuyingPrice(), ticket.getSellingPrice(), ticket.getSellingDate(), ticket.getTicketStatus());
-        }
-        System.out.println("=====================================================================================================================================\n");
+        System.out.println("==============================================================================================================================================================================================");
+        System.out.println("|              Ticket ID                |     Transport Type     |       Buying Price    |       Selling Price    |   Selling Date     |     Status     |  Transporter  |");
+        System.out.println("==============================================================================================================================================================================================");
+        tickets.stream()
+                        .forEach(ticket -> {
+                            System.out.printf("| %21s | %24s | %20s | %20s | %20s | %12s | %14s |\n",
+                                    ticket.getId(), ticket.getTransportType(), ticket.getBuyingPrice(), ticket.getSellingPrice(), ticket.getSellingDate(), ticket.getTicketStatus(), ticket.getTransporter());
+                        });
+        System.out.println("============================================================================================================================================================================================\n");
     }
 
     public Ticket addTicket() {
@@ -104,6 +105,13 @@ public class TicketView {
             }
         }
 
+        String transporter = null;
+        while (transporter == null) {
+            System.out.print("Enter Transporter Name:\t");
+            transporter = scanner.nextLine();
+        }
+
+
         TicketStatus ticketStatus = null;
         while (ticketStatus == null) {
             System.out.print("Select Ticket Status Type SOLD => 1, CANCELED => 2, WAITING => 3: ");
@@ -116,7 +124,7 @@ public class TicketView {
             }
         }
 
-        Ticket ticket = new Ticket(ticketId, transport, buyingPrice, sellingPrice, sellingDate, ticketStatus, contractId);
+        Ticket ticket = new Ticket(ticketId, transport, buyingPrice, sellingPrice, sellingDate, ticketStatus, contractId, transporter);
         return ticket;
     }
 
@@ -184,6 +192,17 @@ public class TicketView {
             }
             existingTicket.setContract_id(contractId);
 
+            String transporter = null;
+            while (transporter == null) {
+                System.out.print("Enter new Transporter Name [" + existingTicket.getTransporter() + "]: ");
+                transporter = scanner.nextLine();
+
+                if (transporter.isEmpty()) {
+                    transporter = existingTicket.getTransporter(); // Keep the existing ID if no new input
+                }
+            }
+            existingTicket.setTransporter(transporter);
+
             // Updating ticket status
             TicketStatus ticketStatus = null;
             while (ticketStatus == null) {
@@ -199,6 +218,7 @@ public class TicketView {
             existingTicket.setTicketStatus(ticketStatus);
 
             // Update the ticket in the database
+            System.out.println(existingTicket.getTransporter());
             ticketDAO.update(existingTicket);
             System.out.println("Ticket updated successfully.");
         } catch (Exception e) {

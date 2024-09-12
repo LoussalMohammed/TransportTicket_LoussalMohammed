@@ -3,6 +3,7 @@ package org.app.Models.Entities;
 import org.app.Models.DAO.Admin.PartnerDAO;
 import org.app.Models.Enums.PartenaryStatus;
 import org.app.Models.Enums.Transport;
+import org.app.Models.Helpers.LevenshteinDistance;
 import org.views.admin.partner.PartnerView;
 
 import java.sql.SQLException;
@@ -185,7 +186,7 @@ public class Partner {
     public static void deletePartner() throws SQLException {
         UUID deletePartnerId = partnerView.getPartnerId(); // Get partner ID for deletion
         Partner partnerToDelete = partnerDAO.findById(deletePartnerId);
-        if (partnerToDelete != null) {
+        if (partnerToDelete != null && LevenshteinDistance.confirmDeletion()) {
             partnerDAO.delete(deletePartnerId);
             System.out.println("Partner successfully deleted.");
         } else {

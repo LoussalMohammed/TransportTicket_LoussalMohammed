@@ -52,7 +52,8 @@ public class TicketDAO {
                             resultSet.getBigDecimal("sellingPrice"),
                             resultSet.getDate("sellingDate"),
                             TicketStatus.fromString(resultSet.getString("ticketStatus")),
-                            (UUID) resultSet.getObject("contract_id")
+                            (UUID) resultSet.getObject("contract_id"),
+                            resultSet.getString("transporter")
                     );
                 } else {
                     return null;
@@ -75,7 +76,9 @@ public class TicketDAO {
                         resultSet.getBigDecimal("sellingPrice"),
                         resultSet.getDate("sellingDate"),
                         TicketStatus.fromString(resultSet.getString("ticketStatus")),
-                        (UUID) resultSet.getObject("contract_id")
+                        (UUID) resultSet.getObject("contract_id"),
+                        resultSet.getString("transporter")
+
                 ));
             }
         }
@@ -83,7 +86,7 @@ public class TicketDAO {
     }
 
     public void save(Ticket ticket) throws SQLException {
-        String sql = "INSERT INTO tickets (id, transportType, buyingPrice, sellingPrice, sellingDate, ticketStatus, contract_id) " +
+        String sql = "INSERT INTO tickets (id, transportType, buyingPrice, sellingPrice, sellingDate, ticketStatus, transporter, contract_id) " +
                 "VALUES (?, CAST(? AS transport), ?, ?, ?, CAST(? AS ticketStatus), ?)";
         try (Connection connection = databaseC.getInstance().getConnection();
              PreparedStatement statement = connection.prepareStatement(sql)) {
@@ -94,7 +97,8 @@ public class TicketDAO {
             statement.setBigDecimal(4, ticket.getSellingPrice());
             statement.setDate(5, new java.sql.Date(ticket.getSellingDate().getTime()));
             statement.setObject(6, ticket.getTicketStatus().name(), Types.OTHER);
-            statement.setObject(7, ticket.getContract_id());
+            statement.setString(7, ticket.getTransporter());
+            statement.setObject(8, ticket.getContract_id());
 
             statement.executeUpdate();
         }
@@ -102,7 +106,7 @@ public class TicketDAO {
 
     public void update(Ticket ticket) throws SQLException {
         String sql = "UPDATE tickets SET transportType = ?, buyingPrice = ?, sellingPrice = ?, sellingDate = ?, " +
-                "ticketStatus = ?, contract_id = ? WHERE id = ?";
+                "ticketStatus = ?, transporter = ?, contract_id = CAST(? AS UUID) WHERE id = ?";
         try (Connection connection = databaseC.getInstance().getConnection();
              PreparedStatement statement = connection.prepareStatement(sql)) {
 
@@ -111,8 +115,9 @@ public class TicketDAO {
             statement.setBigDecimal(3, ticket.getSellingPrice());
             statement.setDate(4, new java.sql.Date(ticket.getSellingDate().getTime()));
             statement.setObject(5, ticket.getTicketStatus().name(), Types.OTHER);
-            statement.setObject(6, ticket.getContract_id());
-            statement.setObject(7, ticket.getId());
+            statement.setString(6, ticket.getTransporter());
+            statement.setObject(7, ticket.getContract_id());
+            statement.setObject(8, ticket.getId());
 
             statement.executeUpdate();
         }
