@@ -9,6 +9,9 @@ import org.views.admin.auth.LoginView;
 
 import java.sql.SQLException;
 import java.time.LocalDateTime;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 public class AuthServices {
@@ -22,7 +25,7 @@ public class AuthServices {
         this.personDAO = new PersonDAO();
     }
 
-    public boolean handleLogin() throws SQLException {
+    public ArrayList<HashMap> handleLogin() throws SQLException {
         boolean loggedIn = false;
 
         int typeAuth = loginView.AuthType();
@@ -39,8 +42,14 @@ public class AuthServices {
                     if (person != null) {
                         loggedIn = true;
                         LoginView.displayLoginResult(true);
-
-                        return true;
+                        List<HashMap> loginSuccess = new ArrayList();
+                        HashMap<String, Boolean> login = new HashMap<>();
+                        login.put("loggedIn", true);
+                        HashMap<String, Person> personMap = new HashMap<>();
+                        personMap.put("person", person);
+                        loginSuccess.add(login);
+                        loginSuccess.add(personMap);
+                        return (ArrayList<HashMap>) loginSuccess;
                     } else {
                         LoginView.displayLoginResult(false);
                     }
@@ -77,8 +86,16 @@ public class AuthServices {
                     if (personLogin != null) {
                         loggedIn = true;
                         LoginView.displayLoginResult(true);
+                        LoginView.displayLoginResult(true);
+                        List<HashMap> loginSuccess = new ArrayList();
+                        HashMap<String, Boolean> login = new HashMap<>();
+                        login.put("loggedIn", true);
+                        HashMap<String, Person> personMap = new HashMap<>();
+                        personMap.put("person", person);
+                        loginSuccess.add(login);
+                        loginSuccess.add(personMap);
 
-                        return true;
+                        return (ArrayList<HashMap>) loginSuccess;
                     } else {
                         LoginView.displayLoginResult(false);
                     }
@@ -100,6 +117,6 @@ public class AuthServices {
             loginView.displayGoodbyeMessage();
         }
 
-        return false;
+        return null;
     }
 }

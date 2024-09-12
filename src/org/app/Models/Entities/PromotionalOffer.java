@@ -8,6 +8,7 @@ import java.util.UUID;
 import org.app.Models.DAO.Admin.PromotionalOfferDAO;
 import org.app.Models.Enums.ReductionType; // Assuming the enum is in the tools package
 import org.app.Models.Enums.OfferStatus;   // Assuming the enum is in the tools package
+import org.app.Models.Helpers.LevenshteinDistance;
 import org.views.admin.promotonalOffer.PromotionalOfferView;
 
 public class PromotionalOffer {
@@ -155,7 +156,9 @@ public class PromotionalOffer {
     }
     public static void deletePromotionalOffer() throws SQLException {
         UUID deletedAdminId = promotionalOfferView.getOfferId();
-        promotionalOfferDAO.delete(deletedAdminId); // Implement this method to delete an admin
+        if(LevenshteinDistance.confirmDeletion()) {
+            promotionalOfferDAO.delete(deletedAdminId);
+        }
     }
     public static void restorePromotionalOffer() throws SQLException {
         UUID restoredAdminId = promotionalOfferView.getOfferId();

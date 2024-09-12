@@ -12,14 +12,12 @@ public class LoginView {
     public String[] promptForLogin() {
         System.out.println("\n================================================================");
         System.out.println("                     Welcome to the Login Panel               ");
-        System.out.println("==================================================================");
+        System.out.println("==================================================================\n");
         System.out.print("Enter your email: ");
         String email = scanner.nextLine().trim();
-        if(scanner.hasNextLine()) {
-            scanner.nextLine();
-        }
         System.out.print("Enter your password: ");
         String password = scanner.nextLine().trim();
+
         return new String[]{email, password};
     }
 
@@ -28,7 +26,6 @@ public class LoginView {
         System.out.println("\n================================================================");
         System.out.println("                     Welcome to the SignUp Panel             ");
         System.out.println("==================================================================\n");
-        scanner.nextLine();
         System.out.print("Enter your First Name: ");
         userData.put("firstName", scanner.nextLine().trim());
         System.out.print("Enter your Last Name: ");
@@ -53,6 +50,7 @@ public class LoginView {
         do {
             System.out.println("\nEnter 1 => Login, OR Enter 2 => SignUp:\t");
             choice = scanner.nextInt();
+            scanner.nextLine();
         } while(choice < 1 || choice > 2);
         return choice;
 

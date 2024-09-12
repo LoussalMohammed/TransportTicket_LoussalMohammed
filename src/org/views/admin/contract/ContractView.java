@@ -54,13 +54,14 @@ public class ContractView {
         System.out.println("\n=====================================================================================================================================");
         System.out.println("|       Contract ID      |    Initial Date   |    End Date   |    Special Tariff   |    Accord Conditions    |  Renewed  |  Status  |");
         System.out.println("=====================================================================================================================================");
-        for (Contract contract : contracts) {
-            String renewed = contract.isRenewed() ? "Yes" : "No";
-            System.out.printf("| %21s | %16s | %13s | %18s | %24s | %8s | %7s |\n",
-                    contract.getId(), contract.getInitDate(), contract.getEndDate(),
-                    contract.getSpecialTariff(), contract.getAccordConditions(),
-                    renewed, contract.getCurrentStatus());
-        }
+        contracts.stream()
+                .forEach(contract -> {
+                    String renewed = contract.isRenewed() ? "Yes" : "No";
+                    System.out.printf("| %21s | %16s | %13s | %18s | %24s | %8s | %7s |\n",
+                            contract.getId(), contract.getInitDate(), contract.getEndDate(),
+                            contract.getSpecialTariff(), contract.getAccordConditions(),
+                            renewed, contract.getCurrentStatus());
+                });
         System.out.println("=====================================================================================================================================\n");
     }
 

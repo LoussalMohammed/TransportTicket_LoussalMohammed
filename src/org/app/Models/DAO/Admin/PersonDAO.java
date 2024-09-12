@@ -11,7 +11,7 @@ import java.util.ArrayList;
 public class PersonDAO {
 
     public void delete(int id) throws SQLException {
-        String sql = "UPDATE persons SET deleted_at = ? WHERE id = ? AND role = 'USER'";
+        String sql = "UPDATE persons SET deleted_at = ? WHERE id = ? AND role = 'user'";
         try (Connection connection = databaseC.getInstance().getConnection();
              PreparedStatement statement = connection.prepareStatement(sql)) {
 
@@ -23,7 +23,7 @@ public class PersonDAO {
     }
 
     public void restore(int id) throws SQLException {
-        String sql = "UPDATE persons SET deleted_at = ? WHERE id = ? AND role = 'USER'";
+        String sql = "UPDATE persons SET deleted_at = ? WHERE id = ? AND role = 'user'";
         try (Connection connection = databaseC.getInstance().getConnection();
              PreparedStatement statement = connection.prepareStatement(sql)) {
 
@@ -35,7 +35,7 @@ public class PersonDAO {
     }
     public Person findById(int id) throws SQLException {
         try (Connection connection = databaseC.getInstance().getConnection()) {
-            String sql = "SELECT * FROM persons WHERE id = ? AND deleted_at IS NULL AND role = 'USER'";
+            String sql = "SELECT * FROM persons WHERE id = ? AND deleted_at IS NULL AND role = 'user'";
             PreparedStatement statement = connection.prepareStatement(sql);
             statement.setObject(1, id);
             try (ResultSet resultSet = statement.executeQuery()) {
@@ -61,7 +61,7 @@ public class PersonDAO {
     public ArrayList<Person> getAllPersons() throws SQLException {
         ArrayList<Person> Persons = new ArrayList<>(10);
         try (Connection connection = databaseC.getInstance().getConnection()) {
-            String sql = "SELECT * FROM persons WHERE deleted_at IS NULL AND role = 'USER'";
+            String sql = "SELECT * FROM persons WHERE deleted_at IS NULL AND role = 'user'";
             PreparedStatement preparedStatement = connection.prepareStatement(sql);
             ResultSet resultSet = preparedStatement.executeQuery();
             while (resultSet.next()) {
@@ -108,7 +108,7 @@ public class PersonDAO {
     }
 
     public void update(Person person) throws SQLException {
-        String sql = "UPDATE persons SET firstName = ?, lastName = ?, email = ?, phone = ?, role = ?, created_at = ? WHERE id = ? AND deleted_at IS NULL  AND role = 'USER'";
+        String sql = "UPDATE persons SET firstName = ?, lastName = ?, email = ?, phone = ?, role = ?, created_at = ? WHERE id = ? AND deleted_at IS NULL  AND role = 'user'";
         try (Connection connection = databaseC.getInstance().getConnection();
              PreparedStatement statement = connection.prepareStatement(sql)) {
 
