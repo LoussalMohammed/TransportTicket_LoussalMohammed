@@ -39,36 +39,36 @@ public class ContractView {
     }
 
     public void displayContract(Contract contract) {
-        System.out.println("\n=====================================================================================================================================");
-        System.out.println("|       Contract ID      |    Initial Date   |    End Date   |    Special Tariff   |    Accord Conditions    |  Renewed  |  Status  |");
-        System.out.println("=====================================================================================================================================");
+        System.out.println("\n=====================================================================================================================================================================================================");
+        System.out.println("|              Contract ID            |    Initial Date   |    End Date   |      Special Tariff     |     Accord Conditions     |  Renewed  |    Status   |           Partner ID              |");
+        System.out.println("=======================================================================================================================================================================================================");
         String renewed = contract.isRenewed() ? "Yes" : "No";
-        System.out.printf("| %21s | %16s | %13s | %18s | %24s | %8s | %7s |\n",
+        System.out.printf("| %21s | %16s | %13s | %18s | %24s | %8s | %7s | %24s |\n",
                 contract.getId(), contract.getInitDate(), contract.getEndDate(),
                 contract.getSpecialTariff(), contract.getAccordConditions(),
-                renewed, contract.getCurrentStatus());
-        System.out.println("=====================================================================================================================================\n");
+                renewed, contract.getCurrentStatus(), contract.getPartner_id());
+        System.out.println("=========================================================================================================================================================");
     }
 
     public void displayContractsList(List<Contract> contracts) {
-        System.out.println("\n=====================================================================================================================================");
-        System.out.println("|       Contract ID      |    Initial Date   |    End Date   |    Special Tariff   |    Accord Conditions    |  Renewed  |  Status  |");
-        System.out.println("=====================================================================================================================================");
+        System.out.println("\n=====================================================================================================================================================================================================");
+        System.out.println("|              Contract ID            |    Initial Date   |    End Date   |      Special Tariff     |     Accord Conditions     |  Renewed  |    Status   |           Partner ID              |");
+        System.out.println("=======================================================================================================================================================================================================");
         contracts.stream()
                 .forEach(contract -> {
                     String renewed = contract.isRenewed() ? "Yes" : "No";
-                    System.out.printf("| %21s | %16s | %13s | %18s | %24s | %8s | %7s |\n",
+                    System.out.printf("| %21s | %16s | %13s | %18s | %24s | %8s | %7s | %24s |\n",
                             contract.getId(), contract.getInitDate(), contract.getEndDate(),
                             contract.getSpecialTariff(), contract.getAccordConditions(),
-                            renewed, contract.getCurrentStatus());
+                            renewed, contract.getCurrentStatus(), contract.getPartner_id());
                 });
-        System.out.println("=====================================================================================================================================\n");
+        System.out.println("=======================================================================================================================================================================================================");
     }
 
     public static Contract addContract() throws SQLException {
-        System.out.println("\n=========================");
-        System.out.println("    Add a New Contract    ");
-        System.out.println("=========================\n");
+        System.out.println("\n==========================================");
+        System.out.println("           Add a New Contract             ");
+        System.out.println("==========================================\n");
 
         UUID contractId = null;
         while (contractId == null) {

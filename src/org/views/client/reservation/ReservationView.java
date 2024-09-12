@@ -3,8 +3,8 @@ import org.app.Models.DAO.Person.ReservationDAO;
 import org.app.Models.Entities.Reservation;
 
 import java.time.LocalDate;
-import java.time.LocalDateTime;
 import java.util.*;
+import java.util.stream.Collectors;
 
 public class ReservationView {
     private final ReservationDAO reservationDAO;
@@ -38,10 +38,10 @@ public class ReservationView {
         Optional<Reservation> reservationOptional = Optional.ofNullable(reservation);
         if(reservationOptional.isPresent()) {
             System.out.println("\n=====================================================================================================================================");
-            System.out.println("|      Reservation ID      |        Ticket ID        |      Client ID       |   Status  |");
+            System.out.println("|      Reservation ID      |        Ticket ID        |      Client ID       |   Partner ID  |");
             System.out.println("=====================================================================================================================================");
             System.out.printf("| %21s | %21s | %21s | %8s |\n",
-                    reservation.getId(), reservation.getTicketId(), reservation.getClientId());
+                    reservation.getId(), reservation.getTicketId(), reservation.getClientId(), reservation.getPartnerId());
             System.out.println("=====================================================================================================================================\n");
         }else {
             System.out.println("There Is No Reservation With This ID!");
@@ -51,14 +51,14 @@ public class ReservationView {
 
     public void displayReservationsList(List<Reservation> reservations) {
         Optional<List<Reservation>> reservationsOptional = Optional.ofNullable(reservations);
-        if(reservations == null && reservationsOptional.isPresent() && !reservationsOptional.isEmpty()) {
+        if(reservations != null && reservationsOptional.isPresent() && !reservationsOptional.isEmpty()) {
             System.out.println("\n=====================================================================================================================================");
-            System.out.println("|      Reservation ID      |        Ticket ID        |      Client ID       |   Status  |");
+            System.out.println("|      Reservation ID      |        Ticket ID        |      Client ID       |   Partner ID  |");
             System.out.println("=====================================================================================================================================");
             reservations.stream()
                             .forEach(reservation -> {
                                 System.out.printf("| %21s | %21s | %21s | %8s |\n",
-                                        reservation.getId(), reservation.getTicketId(), reservation.getClientId());
+                                        reservation.getId(), reservation.getTicketId(), reservation.getClientId(), reservation.getPartnerId());
                             });
             System.out.println("=====================================================================================================================================\n");
         } else {
@@ -67,29 +67,47 @@ public class ReservationView {
 
     }
 
+    public List<Object> ReserveTicket(List<List<Object>> tickets) {
+        System.out.println("_______________________________________________________________________");
+        System.out.println("\t||   You Found The Ticket You Want? Then Enter The Ticket Id:  ||\t");
+        System.out.println("________________________________________________________________________");
+
+        UUID ticketId = UUID.fromString(scanner.nextLine());
+
+        // Find the first ticket that matches the entered ticketId
+        return tickets.stream()
+                .filter(chosenTicket -> {
+                    String cticketId = chosenTicket.get(0).toString();
+                    UUID cticketUUId = UUID.fromString(cticketId);
+                    return cticketUUId.equals(ticketId);
+                })
+                .findFirst() // Find the first matching ticket
+                .orElse(null); // Return null if no ticket is found
+    }
+
+
     public void getTickets(List<List<Object>> tickets) {
         Optional<List<List<Object>>> ticketsOptional = Optional.ofNullable(tickets);
-        System.out.println(tickets);
         if(tickets != null && ticketsOptional.isPresent() && !ticketsOptional.isEmpty()) {
-            System.out.println("\n============================================================================================================================================");
-            System.out.println("|      Transport Type      |        Transporter Name        |       Departure Date       |   Price  |           Partner ID            |");
-            System.out.println("================================================================================================================================================");
+            System.out.println("\n======================================================================================================================================================================");
+            System.out.println(" |      Ticket ID      |      Transport Type      |        Transporter Name        |       Departure Date       |   Price  |           Partner ID            |");
+            System.out.println("========================================================================================================================================================================");
             ticketsOptional.stream()
                     .forEach(mTickets -> {
                         mTickets.stream()
                                         .forEach(sTicket  -> {
-                                            System.out.printf("| %21s | %21s | %21s | %30s |\n",
-                                                    sTicket.get(0), sTicket.get(1), sTicket.get(2), sTicket.get(3));
+                                            System.out.printf("| %28s | %21s | %21s | %21s | %15s | %24s |\n",
+                                                    sTicket.get(0), sTicket.get(1), sTicket.get(2), sTicket.get(3), sTicket.get(4), sTicket.get(5));
                                         });
 
                     });
-            System.out.println("=====================================================================================================================================\n");
+            System.out.println("=======================================================================================================================================================================\n");
         } else {
             System.out.println("There Is No Tickets That Met Your Specifications Yet!");
         }
     }
 
-    public List<Object> createReservation() {
+    public List<Object> addReservationSpecifications() {
         System.out.println("\n===========================================================");
         System.out.println("                        Reserve a Ticket                     ");
         System.out.println("=============================================================");

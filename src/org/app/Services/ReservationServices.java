@@ -1,5 +1,6 @@
 package org.app.Services;
 
+import org.app.Models.Entities.Person;
 import org.app.Models.Entities.Reservation;
 import org.app.Models.Entities.Ticket;
 import org.views.client.reservation.ReservationView;
@@ -13,7 +14,7 @@ public class ReservationServices {
         this.reservationView = new ReservationView();
     }
 
-    public void manageReservation() throws SQLException {
+    public void manageReservation(Person person) throws SQLException {
         while (true) {
             int choice = reservationView.operationType();
 
@@ -25,7 +26,7 @@ public class ReservationServices {
                     Reservation.getReservationById();
                     break;
                 case 3:
-                    Reservation.addReservation();
+                    Reservation.addReservation(person);
                     break;
                 /*case 4:
                     Reservation.updateTicket();

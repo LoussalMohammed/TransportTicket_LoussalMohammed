@@ -8,6 +8,7 @@ import java.sql.SQLException;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 import java.util.UUID;
 
 public class Reservation {
@@ -71,6 +72,14 @@ public class Reservation {
         this.ticketId = ticketId;
     }
 
+    public void setPartnerId(UUID partnerId) {
+        this.partnerId = partnerId;
+    }
+
+    public UUID getPartnerId() {
+        return partnerId;
+    }
+
     @Override
     public String toString() {
         return "Reservation{" +
@@ -86,6 +95,7 @@ public class Reservation {
         int id = reservationView.getReservationId();
         Reservation reservation = reservationDAO.findById(id);
         reservationView.displayReservation(reservation);
+
     }
 
     public static void getAllReservations() throws SQLException {
@@ -93,10 +103,25 @@ public class Reservation {
         reservationView.displayReservationsList(reservations);
     }
 
-    public static void addReservation() throws SQLException{
-        List<Object> ticketFilters = reservationView.createReservation();
+    public static void addReservation(Person person) throws SQLException{
+        List<Object> ticketFilters = reservationView.addReservationSpecifications();
         List<List<Object>> tickets = reservationDAO.findTicketsByFilters(ticketFilters);
         reservationView.getTickets(tickets);
+
+        List<Object> chosenTicket = reservationView.ReserveTicket(tickets);
+        Optional ticketOptional = Optional.of(chosenTicket);
+        if(ticketOptional != null && ticketOptional.isPresent() && !ticketOptional.isEmpty()) {
+            System.out.println(chosenTicket);
+            int id = reservationDAO.getLastId()+1;
+            String ticketID = chosenTicket.get(0).toString();
+            String partnerID = chosenTicket.get(7).toString();
+            Reservation reservation = new Reservation(id, LocalDateTime.now(), person.getId(), UUID.fromString(ticketID), UUID.fromString(partnerID), null);
+            reservationDAO.save(reservation);
+            System.out.println("Reservation Saved Successfully!!");
+        } else {
+            System.out.println("There is No Ticket With Specified ID!!");
+        }
+
     }
 /*
     public static void updatePerson() throws SQLException {
