@@ -1,17 +1,12 @@
 package org.app.Models.DAO.Admin;
 
 import org.app.Models.Entities.Admin;
-import org.app.Models.Entities.Contract;
-import org.app.Models.Enums.CurrentStatus;
 import org.app.Models.Enums.Role;
-import org.app.tools.databaseC;
+import org.app.Tools.databaseC;
 
 import java.sql.*;
-import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
-import java.util.List;
-import java.util.UUID;
 
 public class AdminDAO {
 

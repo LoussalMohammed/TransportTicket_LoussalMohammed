@@ -20,22 +20,17 @@ public class ReservationServices {
 
             switch (choice) {
                 case 1:
-                    Reservation.getAllReservations();
+                    Reservation.getAllReservations(person);
                     break;
                 case 2:
-                    Reservation.getReservationById();
+                    Reservation.getReservationById(person);
                     break;
                 case 3:
                     Reservation.addReservation(person);
                     break;
-                /*case 4:
-                    Reservation.updateTicket();
+                case 4:
+                    Reservation.cancelReservation(person);
                     break;
-                case 5:
-                    Reservation.deleteTicket();
-                    break;
-
-                 */
                 case 0:
                     System.out.println("Exiting...");
                     return;

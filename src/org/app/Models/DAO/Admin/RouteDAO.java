@@ -47,7 +47,8 @@ public class RouteDAO {
                             resultSet.getInt("id"),
                             resultSet.getString("departureCity"),
                             resultSet.getString("destinationCity"),
-                            resultSet.getDate("departureDate").toLocalDate().atStartOfDay(),
+                            resultSet.getTimestamp("departureDate").toLocalDateTime(),
+                            resultSet.getTimestamp("arrivalDate").toLocalDateTime(),
                             resultSet.getBigDecimal("price"),
                             (UUID) resultSet.getObject("partnerId")
                     );
@@ -70,9 +71,11 @@ public class RouteDAO {
                         resultSet.getInt("id"),
                         resultSet.getString("departureCity"),
                         resultSet.getString("destinationCity"),
-                        resultSet.getDate("departureDate").toLocalDate().atStartOfDay(),
+                        resultSet.getTimestamp("departureDate").toLocalDateTime(),
+                        resultSet.getTimestamp("arrivalDate").toLocalDateTime(),
                         resultSet.getBigDecimal("price"),
                         (UUID) resultSet.getObject("partnerId")
+
                 );
                 Routes.add(route);
             }
@@ -84,7 +87,7 @@ public class RouteDAO {
 
 
     public void save(Route route) throws SQLException {
-        String sql = "INSERT INTO routes (id, departureCity, destinationCity, departureDate, price, partnerId) VALUES (?, ?, ?, ?, ?, ?)";
+        String sql = "INSERT INTO routes (id, departureCity, destinationCity, departureDate, arrivalDate, price, partnerId) VALUES (?, ?, ?, ?, ?, ?, ?)";
 
 
         try (Connection connection = databaseC.getInstance().getConnection();
@@ -93,9 +96,10 @@ public class RouteDAO {
             statement.setInt(1, route.getId());
             statement.setString(2, route.getDepartureCity());
             statement.setString(3, route.getDestinationCity());
-            statement.setDate(4, Date.valueOf(route.getDepartureDate().toLocalDate()));
+            statement.setTimestamp(4, Timestamp.valueOf(Timestamp.valueOf(route.getDepartureDate()).toLocalDateTime()));
+            statement.setTimestamp(6, Timestamp.valueOf(Timestamp.valueOf(route.getArrivalDate()).toLocalDateTime()));
             statement.setBigDecimal(5, route.getPrice());
-            statement.setObject(6, route.getPartnerId());
+            statement.setObject(7, route.getPartnerId());
 
 
             statement.executeUpdate();
@@ -103,16 +107,17 @@ public class RouteDAO {
     }
 
     public void update(Route route) throws SQLException {
-        String sql = "UPDATE routes SET departureCity = ?, destinationCity = ?, departureDate = ?, price = ?, partnerId = ? WHERE id = ? AND deleted_at IS NULL";
+        String sql = "UPDATE routes SET departureCity = ?, destinationCity = ?, departureDate = ?, arrivalDate = ?, price = ?, partnerId = ? WHERE id = ? AND deleted_at IS NULL";
         try (Connection connection = databaseC.getInstance().getConnection();
              PreparedStatement statement = connection.prepareStatement(sql)) {
 
             statement.setString(1, route.getDepartureCity());
             statement.setString(2, route.getDestinationCity());
-            statement.setDate(3, Date.valueOf(route.getDepartureDate().toLocalDate()));
-            statement.setBigDecimal(4, route.getPrice());
-            statement.setObject(5, route.getPartnerId()); // Convert to lowercase
-            statement.setInt(6, route.getId());
+            statement.setTimestamp(3, Timestamp.valueOf(Timestamp.valueOf(route.getDepartureDate()).toLocalDateTime()));
+            statement.setTimestamp(4, Timestamp.valueOf(Timestamp.valueOf(route.getArrivalDate()).toLocalDateTime()));
+            statement.setBigDecimal(5, route.getPrice());
+            statement.setObject(6, route.getPartnerId()); // Convert to lowercase
+            statement.setInt(7, route.getId());
 
             statement.executeUpdate();
         }

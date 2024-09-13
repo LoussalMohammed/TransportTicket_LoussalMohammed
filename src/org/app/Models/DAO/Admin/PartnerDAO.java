@@ -5,7 +5,7 @@ import org.app.Models.Entities.Partner;
 import org.app.Models.Enums.CurrentStatus;
 import org.app.Models.Enums.PartenaryStatus;
 import org.app.Models.Enums.Transport;
-import org.app.tools.databaseC;
+import org.app.Tools.databaseC;
 
 import java.sql.*;
 import java.time.LocalDateTime;
