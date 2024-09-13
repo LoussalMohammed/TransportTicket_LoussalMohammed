@@ -82,7 +82,7 @@ public class Main {
 
 
                     ReservationServices reservationServices = new ReservationServices();
-                    reservationServices.manageReservation();
+                    reservationServices.manageReservation(person);
 
 
                 }

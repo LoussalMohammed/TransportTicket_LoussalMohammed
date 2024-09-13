@@ -1,9 +1,8 @@
 package org.app.Models.DAO.Person;
 
 import org.app.Models.Entities.Reservation;
-import org.app.Models.Entities.Ticket;
 import org.app.Models.Enums.Transport;
-import org.app.tools.databaseC;
+import org.app.Tools.databaseC;
 
 import java.sql.*;
 import java.time.LocalDateTime;
@@ -15,6 +14,18 @@ public class ReservationDAO {
 
     public void delete(int id) throws SQLException {
         String sql = "UPDATE reservations SET deleted_at = ? WHERE id = ?";
+        try (Connection connection = databaseC.getInstance().getConnection();
+             PreparedStatement statement = connection.prepareStatement(sql)) {
+
+            statement.setDate(1, Date.valueOf(LocalDateTime.now().toLocalDate()));
+            statement.setInt(2, id);
+
+            statement.executeUpdate();
+        }
+    }
+
+    public void cancel(int id) throws SQLException {
+        String sql = "UPDATE reservations SET canceled_at = ? WHERE id = ?";
         try (Connection connection = databaseC.getInstance().getConnection();
              PreparedStatement statement = connection.prepareStatement(sql)) {
 
@@ -39,12 +50,13 @@ public class ReservationDAO {
 
     public List<List<Object>> findTicketsByFilters(List<Object> ticketFilters) throws SQLException {
         List<List<Object>> tickets = new ArrayList<>();
-        String sql = "SELECT tickets.*, routes.price, routes.partnerId, routes.departureDate " +
+        String sql = "SELECT tickets.*, routes.*" +
                 "FROM tickets " +
                 "LEFT JOIN routes ON tickets.routeId = routes.id " +
-                "WHERE levenshtein(routes.departureCity, ?) <= 2 " +
+                "WHERE tickets.ticketstatus = 'WAITING'"+
+                "AND levenshtein(routes.departureCity, ?) <= 2 "+
                 "AND levenshtein(routes.destinationCity, ?) <= 2 " +
-                "AND routes.departureDate = ?";
+                "AND routes.departureDate = ?" ;
 
         try (Connection connection = databaseC.getInstance().getConnection();
              PreparedStatement statement = connection.prepareStatement(sql)) {
@@ -57,9 +69,12 @@ public class ReservationDAO {
             try (ResultSet resultSet = statement.executeQuery()) {
                 while (resultSet.next()) {
                     List<Object> ticket = new ArrayList<>();
+                    ticket.add(resultSet.getObject("id"));
                     ticket.add(Transport.fromString(resultSet.getString("transportType")));
                     ticket.add(resultSet.getString("transporter"));
                     ticket.add(resultSet.getDate("departureDate").toLocalDate().atStartOfDay());
+                    ticket.add(resultSet.getString("departureCity"));
+                    ticket.add(resultSet.getString("destinationCity"));
                     ticket.add(resultSet.getBigDecimal("price"));
                     ticket.add(resultSet.getObject("partnerId"));
 
@@ -73,9 +88,8 @@ public class ReservationDAO {
 
     public Reservation findById(int id) throws SQLException {
         try (Connection connection = databaseC.getInstance().getConnection()) {
-            String sql = "SELECT * FROM reservations WHERE id = ? AND deleted_at IS NULL";
+            String sql = "SELECT * FROM reservations WHERE deleted_at IS NULL AND canceled_at IS NULL";
             PreparedStatement statement = connection.prepareStatement(sql);
-            statement.setInt(1, id);
             try (ResultSet resultSet = statement.executeQuery()) {
 
                 if (resultSet.next()) {
@@ -97,7 +111,7 @@ public class ReservationDAO {
     public List<Reservation> getAllReservations() throws SQLException {
         List<Reservation> reservations = new ArrayList<>();
         try (Connection connection = databaseC.getInstance().getConnection()) {
-            String sql = "SELECT * FROM reservations WHERE deleted_at IS NULL";
+            String sql = "SELECT * FROM reservations WHERE deleted_at IS NULL AND canceled_at IS NULL ORDER BY id ASC";
             PreparedStatement preparedStatement = connection.prepareStatement(sql);
             ResultSet resultSet = preparedStatement.executeQuery();
             while (resultSet.next()) {
@@ -115,21 +129,33 @@ public class ReservationDAO {
     }
 
     public void save(Reservation reservation) throws SQLException {
-        String sql = "INSERT INTO reservations (id, reserved_at, clientId, ticketId) VALUES (?, ?, ?, ?)";
+        // SQL query to insert a new reservation
+        String sql = "INSERT INTO reservations (id, reserved_at, clientId, ticketId, partnerId, canceled_at) VALUES (?, ?, ?, ?, ?, ?)";
         try (Connection connection = databaseC.getInstance().getConnection();
              PreparedStatement statement = connection.prepareStatement(sql)) {
 
-            statement.setInt(1, reservation.getId());
-            statement.setObject(2, reservation.getReservedAt());
-            statement.setInt(3, reservation.getClientId());
-            statement.setObject(4, reservation.getTicketId());
+            statement.setInt(1, reservation.getId());  // Integer for reservation ID
+            statement.setObject(2, reservation.getReservedAt());  // Timestamp
+            statement.setInt(3, reservation.getClientId());  // Integer for client ID
+            statement.setObject(4, reservation.getTicketId(), java.sql.Types.OTHER);  // UUID for ticketId
+            statement.setObject(5, reservation.getPartnerId(), java.sql.Types.OTHER); // UUID for partnerId
+            statement.setObject(6, null);  // Optional for canceled_at
 
             statement.executeUpdate();
+
+            // SQL query to update ticket status
+            String ticketSql = "UPDATE tickets SET ticketStatus = 'SOLD' WHERE id = ?";
+            try (PreparedStatement statement1 = connection.prepareStatement(ticketSql)) {
+                statement1.setObject(1, reservation.getTicketId(), java.sql.Types.OTHER);  // UUID for ticketId
+
+                statement1.executeUpdate();
+            }
         }
     }
 
+
     public void update(Reservation reservation) throws SQLException {
-        String sql = "UPDATE reservations SET reserved_at = ?, clientId = ?, ticketId = ?, canceled_at = ? WHERE id = ?";
+        String sql = "UPDATE reservations SET reserved_at = ?, clientId = ?, ticketId = ?, canceled_at = ? WHERE id = ?  AND canceled_at IS NULL";
         try (Connection connection = databaseC.getInstance().getConnection();
              PreparedStatement statement = connection.prepareStatement(sql)) {
 
@@ -141,6 +167,27 @@ public class ReservationDAO {
 
             statement.executeUpdate();
         }
+    }
+
+    public Integer getLastId() {
+        String sql = "SELECT MAX(id) AS id FROM reservations";
+        try (Connection connection = databaseC.getInstance().getConnection();
+             PreparedStatement statement = connection.prepareStatement(sql)) {
+            ResultSet resultSet = statement.executeQuery();
+            try {
+                if(resultSet.next()) {
+                    Integer id = resultSet.getInt("id");
+                    return id;
+                } else {
+                    return null;
+                }
+            } catch (SQLException e) {
+                throw new RuntimeException(e);
+            }
+        } catch (SQLException e) {
+            throw new RuntimeException(e);
+        }
+
     }
 
 }

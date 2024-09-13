@@ -31,6 +31,17 @@ public class LevenshteinDistance {
         }
 
     }
+
+    public static boolean confirmCancellation() {
+        System.out.println("Are You Sure You Wanna Cancel This Reservation, Then Enter Yes Otherwise No:");
+        String answer = scanner.nextLine();
+        if(compute_Levenshtein_distanceDP(answer.toLowerCase(), "Yes") <= 2) {
+            return true;
+        } else {
+            return false;
+        }
+
+    }
     public static int compute_Levenshtein_distanceDP(String str1,
                                               String str2)
     {
