@@ -1,8 +1,11 @@
 package org.views.client.reservation;
 import org.app.Models.DAO.Person.ReservationDAO;
+import org.app.Models.Entities.Person;
 import org.app.Models.Entities.Reservation;
+import org.app.Models.Helpers.LevenshteinDistance;
 
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.*;
 import java.util.stream.Collectors;
 
@@ -72,17 +75,28 @@ public class ReservationView {
         System.out.println("\t||   You Found The Ticket You Want? Then Enter The Ticket Id:  ||\t");
         System.out.println("________________________________________________________________________");
 
-        UUID ticketId = UUID.fromString(scanner.nextLine());
+        System.out.println("IF Yes Then Enter Yes Otherwise No:");
+        String answer = scanner.nextLine();
+        if(LevenshteinDistance.compute_Levenshtein_distanceDP(answer, "Yes") <= 2) {
 
-        // Find the first ticket that matches the entered ticketId
-        return tickets.stream()
-                .filter(chosenTicket -> {
-                    String cticketId = chosenTicket.get(0).toString();
-                    UUID cticketUUId = UUID.fromString(cticketId);
-                    return cticketUUId.equals(ticketId);
-                })
-                .findFirst() // Find the first matching ticket
-                .orElse(null); // Return null if no ticket is found
+            System.out.println("\t Then Enter The Ticket Id: \t");
+
+            UUID ticketId = UUID.fromString(scanner.nextLine());
+
+            // Find the first ticket that matches the entered ticketId
+            return tickets.stream()
+                    .filter(chosenTicket -> {
+                        String cticketId = chosenTicket.get(0).toString();
+                        UUID cticketUUId = UUID.fromString(cticketId);
+                        return cticketUUId.equals(ticketId);
+                    })
+                    .findFirst() // Find the first matching ticket
+                    .orElse(null); // Return null if no ticket is found
+        } else {
+            return null;
+        }
+
+
     }
 
 
@@ -126,7 +140,7 @@ public class ReservationView {
         }
 
         System.out.println("Enter The Departure Date:\t");
-        LocalDate departureDate = LocalDate.parse(scanner.nextLine());
+        LocalDateTime departureDate = LocalDateTime.parse(scanner.nextLine());
 
         List<Object> ticketFilter = new ArrayList<>();
         ticketFilter.add(departureCity);
@@ -136,21 +150,26 @@ public class ReservationView {
         return ticketFilter;
     }
 
-    public void cancelReservation() {
+    public int cancelReservation(Person person) {
         try {
             System.out.print("Enter Reservation ID to cancel: ");
             int reservationId = scanner.nextInt();
-            Reservation existingReservation = reservationDAO.findById(reservationId);
+            Reservation existingReservation = reservationDAO.findById(reservationId, person.getId());
             if (existingReservation == null) {
                 System.out.println("Reservation not found.");
-                return;
+                return 0;
+            } else {
+                return reservationId;
             }
 
-            reservationDAO.delete(reservationId);
-            System.out.println("Reservation canceled successfully.");
         } catch (Exception e) {
             System.out.println("Error canceling reservation: " + e.getMessage());
         }
+        return 0;
+    }
+
+    public void cancellationDone() {
+        System.out.println("Reservation Canceled Successfully!");
     }
 
     /*

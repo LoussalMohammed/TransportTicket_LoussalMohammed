@@ -230,3 +230,50 @@ public static String createReservation() {
 
 return createTable("routes", tableDefinition);
 }
+public static createFavorite() {
+    String tableDefinition = "partnerId UUID NOT NULL,"+
+    "departureCity VARCHAR(255) NOT NULL, "+
+    "destinationCity VARCHAR(255) NOT NULL, "+
+    "departureDate TIMESTAMP NOT NULL,"+
+    "arrivalDate TIMESTAMP NOT NULL",
+    "deleted_at TIMESTAMP DEFAULT NULL";
+
+    return createTable("favorites", tableDefinition);
+}
+
+public static addFavorits() {
+    "CREATE OR REPLACE FUNCTION add_Favorits_On_Reservation()
+    RETURNS TRIGGER AS $$
+    DECLARE
+    routeId INT;
+    departureCity VARCHAR;
+    destinationCity VARCHAR;
+    departureDate TIMESTAMP;
+    arrivalDate TIMESTAMP;
+
+    BEGIN
+
+        SELECT t.routeId INTO routeId
+        FROM tickets t
+        WHERE t.id = NEW.ticketId;
+
+        SELECT r.departureCity, r.destinationCity, r.departureDate, r.arrivalDate
+        INTO departureCity, destinationCity, departureDate, arrivalDate
+        FROM routes r
+        WHERE r.id = routeId;
+
+        INSERT INTO favorites (partnerId, departureCity, destinationCity, departureDate, arrivalDate)
+        VALUES (NEW.partnerId, departureCity, destinationCity, departureDate, arrivalDate);
+
+        RETURN NEW;
+    END;
+    $$ LANGUAGE plpgsql;
+    "
+}
+
+public static favoritesTrigget() {
+    "CREATE TRIGGER trigger_add_favorites
+    AFTER INSERT ON reservations
+    FOR EACH ROW
+    EXECUTE FUNCTION add_Favorits_On_Reservation();"
+}

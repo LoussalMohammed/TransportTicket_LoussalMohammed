@@ -1,15 +1,14 @@
 package org.app.Models.Entities;
 
 import org.app.Models.DAO.Admin.RouteDAO;
-import org.app.Models.DAO.Admin.TicketDAO;
 import org.app.Models.Helpers.LevenshteinDistance;
 import org.views.admin.route.RouteView;
 
-import java.awt.geom.RoundRectangle2D;
 import java.math.BigDecimal;
 import java.sql.SQLException;
 import java.time.LocalDateTime;
 import java.util.List;
+import java.util.Optional;
 import java.util.Scanner;
 import java.util.UUID;
 
@@ -23,14 +22,16 @@ public class Route {
     private String departureCity;
     private String destinationCity;
     private LocalDateTime departureDate;
+    private LocalDateTime arrivalDate;
     private BigDecimal price;
     private UUID partnerId;
 
-    public Route(int id, String departureCity, String destinationCity, LocalDateTime departureDate, BigDecimal price, UUID partnerId) {
+    public Route(int id, String departureCity, String destinationCity, LocalDateTime departureDate, LocalDateTime arrivalDate, BigDecimal price, UUID partnerId) {
         this.id = id;
         this.departureCity = departureCity;
         this.destinationCity = destinationCity;
         this.departureDate = departureDate;
+        this.arrivalDate = arrivalDate;
         this.price = price;
         this.partnerId = partnerId;
     }
@@ -65,6 +66,14 @@ public class Route {
 
     public void setDepartureDate(LocalDateTime departureDate) {
         this.departureDate = departureDate;
+    }
+
+    public LocalDateTime getArrivalDate() {
+        return arrivalDate;
+    }
+
+    public void setArrivalDate(LocalDateTime arrivalDate) {
+        this.arrivalDate = arrivalDate;
     }
 
     public BigDecimal getPrice() {
@@ -111,8 +120,14 @@ public class Route {
         routeDAO.save(route);
     }
 
-    public static void updateRoute() {
-        routeView.updateRoute();
+    public static void updateRoute() throws SQLException {
+        Route route = routeView.updateRoute();
+        Optional routeOptional = Optional.ofNullable(route);
+        if(routeOptional != null && routeOptional.isPresent() && !routeOptional.isEmpty()) {
+            routeDAO.update(route);
+        } else {
+            System.out.println("Update Not Completed!");
+        }
     }
 
     public static void deleteRoute() throws SQLException {

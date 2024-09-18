@@ -1,10 +1,9 @@
 package org.app.Models.DAO.Admin;
 
-import org.app.Models.Entities.Admin;
 import org.app.Models.Entities.Person;
 import org.app.Models.Enums.Role;
 import org.app.Models.Helpers.PasswordUtil;
-import org.app.tools.databaseC;
+import org.app.Tools.databaseC;
 
 import java.sql.*;
 

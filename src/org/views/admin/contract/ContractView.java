@@ -127,6 +127,7 @@ public class ContractView {
                 PromotionalOffer promotionalOffer = PromotionalOfferDAO.findById(offerID);
                 if (promotionalOffer != null) {
                     promotionalOffers.add(promotionalOffer);
+
                 } else {
                     System.out.println("No Promotional Offer found with this ID.");
                 }

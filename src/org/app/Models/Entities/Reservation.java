@@ -6,7 +6,6 @@ import org.views.client.reservation.ReservationView;
 
 import java.sql.SQLException;
 import java.time.LocalDateTime;
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
@@ -91,15 +90,15 @@ public class Reservation {
                 '}';
     }
 
-    public static void getReservationById() throws SQLException {
+    public static void getReservationById(Person person) throws SQLException {
         int id = reservationView.getReservationId();
-        Reservation reservation = reservationDAO.findById(id);
+        Reservation reservation = reservationDAO.findById(id, person.getId());
         reservationView.displayReservation(reservation);
 
     }
 
-    public static void getAllReservations() throws SQLException {
-        List<Reservation> reservations = reservationDAO.getAllReservations();
+    public static void getAllReservations(Person person) throws SQLException {
+        List<Reservation> reservations = reservationDAO.getAllReservations(person.getId());
         reservationView.displayReservationsList(reservations);
     }
 
@@ -109,7 +108,7 @@ public class Reservation {
         reservationView.getTickets(tickets);
 
         List<Object> chosenTicket = reservationView.ReserveTicket(tickets);
-        Optional ticketOptional = Optional.of(chosenTicket);
+        Optional ticketOptional = Optional.ofNullable(chosenTicket);
         if(ticketOptional != null && ticketOptional.isPresent() && !ticketOptional.isEmpty()) {
             System.out.println(chosenTicket);
             int id = reservationDAO.getLastId()+1;
@@ -119,7 +118,7 @@ public class Reservation {
             reservationDAO.save(reservation);
             System.out.println("Reservation Saved Successfully!!");
         } else {
-            System.out.println("There is No Ticket With Specified ID!!");
+            System.out.println("There is No Ticket For Your Specifications Currently!!");
         }
 
     }
@@ -127,13 +126,16 @@ public class Reservation {
     public static void updatePerson() throws SQLException {
         Person updatePerson = personView.addPerson();
         personDAO.update(updatePerson);
-    }
+    }*/
 
-    public static void deletePerson() throws SQLException {
-        int deletedPersonId = personView.getPerson();
-        if(LevenshteinDistance.confirmDeletion()) {
-            personDAO.delete(deletedPersonId);
+    public static void cancelReservation(Person person) throws SQLException {
+        int reservationId = reservationView.cancelReservation(person);
+        if(reservationId != 0 && LevenshteinDistance.confirmCancellation()) {
+            reservationDAO.cancel(reservationId);
+            reservationView.cancellationDone();
+        } else {
+            System.out.println("Deletion Process Incomplete!");
         }
 
-    }*/
+    }
 }

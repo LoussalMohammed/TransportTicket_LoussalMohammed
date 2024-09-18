@@ -2,7 +2,7 @@ package org.app.Models.DAO.Admin;
 
 import org.app.Models.Enums.Role;
 import org.app.Models.Entities.Person;
-import org.app.tools.databaseC;
+import org.app.Tools.databaseC;
 
 import java.sql.*;
 import java.time.LocalDateTime;

@@ -2,9 +2,6 @@ package org.views.admin.route;
 
 import org.app.Models.DAO.Admin.RouteDAO;
 import org.app.Models.Entities.Route;
-import org.app.Models.Entities.Ticket;
-import org.app.Models.Enums.TicketStatus;
-import org.app.Models.Enums.Transport;
 
 import java.math.BigDecimal;
 import java.sql.SQLException;
@@ -46,21 +43,21 @@ public class RouteView {
 
     public void displayRoute(Route route) {
         System.out.println("\n==============================================================================================================================================");
-        System.out.println("|        Route ID        |     Depart City     |    Destination City    |    Depart Date    |   Price   |  partnerId  |");
+        System.out.println("|        Route ID        |     Depart City     |    Destination City    |    Depart Date    |   Arrival Date   |   Price   |  partnerId  |");
         System.out.println("================================================================================================================================================");
-        System.out.printf("| %12s | %20s | %18s | %18s | %9s | %18s |\n",
-                route.getId(), route.getDepartureCity(), route.getDestinationCity(), route.getDepartureDate(), route.getPrice(), route.getPartnerId());
+        System.out.printf("| %12s | %20s | %18s | %18s | %18s | %9s | %18s |\n",
+                route.getId(), route.getDepartureCity(), route.getDestinationCity(), route.getDepartureDate(), route.getArrivalDate(), route.getPrice(), route.getPartnerId());
         System.out.println("=====================================================================================================================================\n");
     }
 
     public void displayRoutesList(List<Route> routes) {
         System.out.println("\n=====================================================================================================================================");
-        System.out.println("|        Route ID        |     Depart City     |    Destination City    |    Depart Date    |   Price   |  partnerId  |");
+        System.out.println("|        Route ID        |     Depart City     |    Destination City    |    Depart Date    |   Arrival Date   |   Price   |  partnerId  |");
         System.out.println("=====================================================================================================================================");
         routes.stream()
                 .forEach(route -> {
-                    System.out.printf("| %12s | %20s | %18s | %18s | %9s | %18s |\n",
-                            route.getId(), route.getDepartureCity(), route.getDestinationCity(), route.getDepartureDate(), route.getPrice(), route.getPartnerId());
+                    System.out.printf("| %12s | %20s | %18s | %18s | %18s | %9s | %18s |\n",
+                            route.getId(), route.getDepartureCity(), route.getDestinationCity(), route.getDepartureDate(), route.getArrivalDate(), route.getPrice(), route.getPartnerId());
                 });
         System.out.println("=====================================================================================================================================\n");
     }
@@ -92,6 +89,13 @@ public class RouteView {
             departureDate = LocalDateTime.parse(scanner.nextLine());
         }
 
+        System.out.print("Enter Arrival Date (Format EX: 2020-10-09T08:30:00): ");
+        LocalDateTime arrivalDate = LocalDateTime.parse(scanner.nextLine());
+        while(LocalDateTime.now().isAfter(arrivalDate)) {
+            System.out.print("Enter Arrival Date (Format EX: 2020-10-09T08:30:00) AND It Should be after ("+LocalDateTime.now()+"):");
+            arrivalDate = LocalDateTime.parse(scanner.nextLine());
+        }
+
         System.out.println("Enter Price (34.99):");
         BigDecimal price = scanner.nextBigDecimal();
         UUID partnerId = null;
@@ -106,11 +110,11 @@ public class RouteView {
             }
         }
 
-        Route route = new Route(id, departureCity, destinationCity, departureDate, price, partnerId);
+        Route route = new Route(id, departureCity, destinationCity, departureDate, arrivalDate, price, partnerId);
         return route;
     }
 
-    public void updateRoute() {
+    public Route updateRoute() {
         try {
             System.out.print("Enter Route ID to update: ");
             int routeId = scanner.nextInt();
@@ -121,7 +125,7 @@ public class RouteView {
             Route existingRoute = routeDAO.findById(routeId);
             if (existingRoute == null) {
                 System.out.println("Route not found.");
-                return;
+                return null;
             }
 
             System.out.println("Current Departure City: " + existingRoute.getDepartureCity());
@@ -143,6 +147,13 @@ public class RouteView {
             String departureDate = scanner.nextLine();
             if (!departureDate.isEmpty()) {
                 existingRoute.setDepartureDate(LocalDateTime.parse(departureDate));
+            }
+
+            System.out.println("Current Arrival Date: " + existingRoute.getArrivalDate());
+            System.out.println("Enter new Arrival Date (YYYY-MM-DDTHH:MM) (or press Enter to keep current): ");
+            String arrivalDate = scanner.nextLine();
+            if (!arrivalDate.isEmpty()) {
+                existingRoute.setArrivalDate(LocalDateTime.parse(arrivalDate));
             }
 
             System.out.println("Current Price: " + existingRoute.getPrice());
@@ -167,14 +178,14 @@ public class RouteView {
                     }
                 }
             }
+
             existingRoute.setPartnerId(partnerId);
 
-            // Update the route in the database
-            routeDAO.update(existingRoute);
-            System.out.println("Route updated successfully.");
+            return existingRoute;
         } catch (Exception e) {
             System.out.println("Error updating Route: " + e.getMessage());
         }
+        return null;
     }
 
 

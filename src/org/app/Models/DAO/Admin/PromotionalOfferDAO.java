@@ -3,7 +3,7 @@ package org.app.Models.DAO.Admin;
 import org.app.Models.Entities.PromotionalOffer;
 import org.app.Models.Enums.ReductionType;
 import org.app.Models.Enums.OfferStatus;
-import org.app.tools.databaseC;
+import org.app.Tools.databaseC;
 
 import java.sql.*;
 import java.time.LocalDateTime;

@@ -86,46 +86,52 @@ public class ReservationDAO {
     }
 
 
-    public Reservation findById(int id) throws SQLException {
+    public Reservation findById(int id, int clientId) throws SQLException {
         try (Connection connection = databaseC.getInstance().getConnection()) {
-            String sql = "SELECT * FROM reservations WHERE deleted_at IS NULL AND canceled_at IS NULL";
-            PreparedStatement statement = connection.prepareStatement(sql);
-            try (ResultSet resultSet = statement.executeQuery()) {
+            String sql = "SELECT * FROM reservations WHERE id = ? AND clientId = ? AND deleted_at IS NULL AND canceled_at IS NULL";
+            try (PreparedStatement statement = connection.prepareStatement(sql)) {
+                statement.setInt(1, id);
+                statement.setInt(2, clientId);
+                try(ResultSet resultSet = statement.executeQuery()) {
+                    if (resultSet.next()) {
+                        return new Reservation(
+                                resultSet.getInt("id"),
+                                resultSet.getObject("reserved_at", LocalDateTime.class),
+                                resultSet.getInt("clientId"),
+                                (UUID) resultSet.getObject("ticketId"),
+                                (UUID) resultSet.getObject("partnerId"),
+                                resultSet.getObject("canceled_at", LocalDateTime.class)
+                        );
+                    } else {
+                        return null;
+                    }
 
-                if (resultSet.next()) {
-                    return new Reservation(
-                            resultSet.getInt("id"),
-                            resultSet.getObject("reserved_at", LocalDateTime.class),
-                            resultSet.getInt("clientId"),
-                            (UUID) resultSet.getObject("ticketId"),
-                            (UUID) resultSet.getObject("partnerId"),
-                            resultSet.getObject("canceled_at", LocalDateTime.class)
-                    );
-                } else {
-                    return null;
                 }
             }
         }
     }
 
-    public List<Reservation> getAllReservations() throws SQLException {
+    public List<Reservation> getAllReservations(int id) throws SQLException {
         List<Reservation> reservations = new ArrayList<>();
         try (Connection connection = databaseC.getInstance().getConnection()) {
-            String sql = "SELECT * FROM reservations WHERE deleted_at IS NULL AND canceled_at IS NULL ORDER BY id ASC";
-            PreparedStatement preparedStatement = connection.prepareStatement(sql);
-            ResultSet resultSet = preparedStatement.executeQuery();
-            while (resultSet.next()) {
-                reservations.add(new Reservation(
-                        resultSet.getInt("id"),
-                        resultSet.getObject("reserved_at", LocalDateTime.class),
-                        resultSet.getInt("clientId"),
-                        (UUID) resultSet.getObject("ticketId"),
-                        (UUID) resultSet.getObject("partnerId"),
-                        resultSet.getObject("canceled_at", LocalDateTime.class)
-                ));
+            String sql = "SELECT * FROM reservations WHERE clientId = ? AND deleted_at IS NULL AND canceled_at IS NULL ORDER BY id ASC";
+            try(PreparedStatement preparedStatement = connection.prepareStatement(sql)) {
+                preparedStatement.setInt(1, id);
+                try(ResultSet resultSet = preparedStatement.executeQuery()) {
+                    while (resultSet.next()) {
+                        reservations.add(new Reservation(
+                                resultSet.getInt("id"),
+                                resultSet.getObject("reserved_at", LocalDateTime.class),
+                                resultSet.getInt("clientId"),
+                                (UUID) resultSet.getObject("ticketId"),
+                                (UUID) resultSet.getObject("partnerId"),
+                                resultSet.getObject("canceled_at", LocalDateTime.class)
+                        ));
+                    }
+                }
+                return reservations;
+                }
             }
-        }
-        return reservations;
     }
 
     public void save(Reservation reservation) throws SQLException {
