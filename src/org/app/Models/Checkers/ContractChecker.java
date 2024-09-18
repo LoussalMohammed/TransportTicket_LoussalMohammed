@@ -13,6 +13,7 @@ import org.app.Tools.databaseC;
 public class ContractChecker {
 
     public static void main(String[] args) {
+
         contractMonitor();
     }
 
