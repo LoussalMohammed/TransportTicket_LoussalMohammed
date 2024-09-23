@@ -13,9 +13,9 @@ public class Main {
             boolean continueChoosing = true; // Flag to control the loop
 
             while (continueChoosing) {
-                System.out.println("\n=================================================================================================================");
+                System.out.println("\n================================================================================================================================");
                 System.out.println("Choose the wanted Entity: person => 1 admin => 2, partner => 3, contract => 4, promotional Offer => 5, ticket => 6, exit => 0");
-                System.out.println("=================================================================================================================== ");
+                System.out.println("==================================================================================================================================");
 
                 Integer entity = scanner.nextInt();
 

@@ -54,6 +54,9 @@ public class LoginView {
             System.out.println("\nEnter 1 => Login, OR Enter 2 => SignUp:\t");
             choice = scanner.nextInt();
         } while(choice < 1 || choice > 2);
+        if(scanner.hasNextLine()) {
+            scanner.nextLine();
+        }
         return choice;
 
     }
