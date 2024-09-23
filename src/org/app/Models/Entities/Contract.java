@@ -26,6 +26,7 @@ public class Contract {
     private UUID partner_id;
 
     private List<PromotionalOffer> promotionalOffers;
+    private List<Ticket> tickets;
 
     public Contract(UUID id, Date initDate, Date endDate, BigDecimal specialTariff, String accordConditions, boolean renewed, CurrentStatus currentStatus, UUID partner_id, List<PromotionalOffer> promotionalOffers) {
         this.id = id;
